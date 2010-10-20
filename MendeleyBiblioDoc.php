@@ -188,6 +188,10 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 		$that->type = self::biblioToMendeleyType($node->$map['type']);
 
 		foreach($node->biblio_contributors as $biblioContribKey => $contribs) {
+			foreach($contribs as $key => &$values) {
+				$values = $values['name'];
+			}
+
 			switch($biblioContribKey) {
 				case self::BIBLIO_AUTHOR:
 					$that->authors = $contribs;
