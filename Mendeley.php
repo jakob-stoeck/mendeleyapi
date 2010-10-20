@@ -1,10 +1,11 @@
 <?php
-define( 'MENDELEY_REQUEST_TOKEN_ENDPOINT', 'http://www.mendeley.com/oauth/request_token/' );
-define( 'MENDELEY_ACCESS_TOKEN_ENDPOINT', 'http://www.mendeley.com/oauth/access_token/' );
-define( 'MENDELEY_AUTHORIZE_ENDPOINT', 'http://www.mendeley.com/oauth/authorize/' );
-define( 'MENDELEY_OAPI_URL', 'http://www.mendeley.com/oapi/library/' );
 
 class Mendeley {
+	const MENDELEY_REQUEST_TOKEN_ENDPOINT = 'http://www.mendeley.com/oauth/request_token/';
+	const MENDELEY_ACCESS_TOKEN_ENDPOINT = 'http://www.mendeley.com/oauth/access_token/';
+	const MENDELEY_AUTHORIZE_ENDPOINT = 'http://www.mendeley.com/oauth/authorize/';
+	const MENDELEY_OAPI_URL = 'http://www.mendeley.com/oapi/library/';
+
 	/**
 	 * @var OAuthConsumer $consumer
 	 */
@@ -52,7 +53,7 @@ class Mendeley {
 				$request = $this->cache->get('request_token');
 
 				if($request === false) {
-					$request = $this->oauthTokenRequest(null, MENDELEY_REQUEST_TOKEN_ENDPOINT);
+					$request = $this->oauthTokenRequest(null, self::MENDELEY_REQUEST_TOKEN_ENDPOINT);
 					$this->cache->set('request_token', $request);
 				}
 
@@ -61,14 +62,14 @@ class Mendeley {
 				if(!$this->isActiveCallback()) {
 					// authorize
 					$callback_url = sprintf('http://%s%s', $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']);
-					$auth_url = MENDELEY_AUTHORIZE_ENDPOINT . '?oauth_token=' . urlencode($request_token->key) . '&oauth_callback=' . urlencode($callback_url);
+					$auth_url = self::MENDELEY_AUTHORIZE_ENDPOINT . '?oauth_token=' . urlencode($request_token->key) . '&oauth_callback=' . urlencode($callback_url);
 					header('Location: ' . $auth_url); exit;
 				} else {
 					// get access token
 					if($_REQUEST['oauth_token'] !== $request_token->key) {
 						throw new Exception('Request token is wrong, please try again. This could happen if you open a strange URL. Please open the basis URL with no query arguments attached instead.');
 					}
-					$request = $this->oauthTokenRequest($request_token, MENDELEY_ACCESS_TOKEN_ENDPOINT, array('oauth_verifier' => $_GET['oauth_verifier']));
+					$request = $this->oauthTokenRequest($request_token, self::MENDELEY_ACCESS_TOKEN_ENDPOINT, array('oauth_verifier' => $_GET['oauth_verifier']));
 					$this->cache->set('access_token', $request);
 					$this->cache->del('request_token');
 					$this->accessToken = new OAuthToken($request['oauth_token'], $request['oauth_token_secret']);
@@ -89,7 +90,7 @@ class Mendeley {
 	 */
 	private function http($method, $url, $params = array()) {
 		$token = $this->getAccessToken($this->signatureMethod, $this->consumer);
-		$accReq = OAuthRequest::from_consumer_and_token($this->consumer, $token, $method, MENDELEY_OAPI_URL . $url, $params);
+		$accReq = OAuthRequest::from_consumer_and_token($this->consumer, $token, $method, self::MENDELEY_OAPI_URL . $url, $params);
 		$accReq->sign_request($this->signatureMethod, $this->consumer, $token);
 
 		$headers = array();
