@@ -1,6 +1,7 @@
 <?php
 require_once('simpletest/autorun.php');
 require_once('../Mendeley.php');
+require_once('../MendeleyBiblioDoc.php');
 require_once('../Configuration.php');
 
 class AllTests extends TestSuite {
@@ -10,8 +11,9 @@ class AllTests extends TestSuite {
 		$this->TestSuite('All tests');
 		$this->addFile($dir . 'MendeleyCacheTest.php');
 		$this->addFile($dir . 'MendeleyDocTest.php');
-		$this->addFile($dir . 'MendeleyUtilTest.php');
-		$this->addFile($dir . 'MendeleyTest.php');
+		$this->addFile($dir . 'MendeleyBiblioDocTest.php');
+		// $this->addFile($dir . 'MendeleyUtilTest.php');
+		// $this->addFile($dir . 'MendeleyTest.php');
 	}
 }
 ?>

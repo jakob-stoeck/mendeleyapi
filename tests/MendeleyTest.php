@@ -1,16 +1,14 @@
 <?php
 class MendeleyTest extends UnitTestCase {
-
-
 	function testGet() {
 		$sharedCollectionId = 164791;
 		$url = 'sharedcollections/' . $sharedCollectionId;
 		$params = array('page' => 1, 'items' => 1);
 		
 		$mendeley = new Mendeley();
-		$request = $mendeley->get($url, $params);
+		$result = $mendeley->get($url, $params);
 
-		$this->assertEqual((int)$request->shared_collection_id, $sharedCollectionId);
+		$this->assertEqual((int)$result->shared_collection_id, $sharedCollectionId);
 	}
 
 	function testCreateDocument() {

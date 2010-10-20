@@ -125,6 +125,26 @@ class Mendeley {
 	}
 
 	/**
+	 * enrich a group with its document details instead of only document ids
+	 * 
+	 * @param string $collectionUrl
+	 * 	works with sharedcollection/id and collection/id
+	 * @param array $params
+	 */
+	public function getCollection($collectionUrl, $params = array()) {
+		$collection = $this->get($collectionUrl, $params);
+		$documents = array();
+
+		foreach($collection->document_ids as $id) {
+			$documents[$id] = $this->get('documents/' . $id);
+		}
+
+		$collection->documents = $documents;
+
+		return $collection;
+	}
+
+	/**
 	 * Gets OAuth (request or access) token
 	 * 
 	 * @param OAuthSignatureMethod $this->signatureMethod
@@ -221,43 +241,70 @@ class MendeleyUtil {
 				return 'Unknown Error';
 		}
 	}
+
+	/**
+	 * Returns document detail keys (there is no documentation about those)
+	 */
+	public static function arrayKeysRecursive($array) {
+		$keys = array();
+		foreach($array as $key => $value) {
+			$keys = array_merge($keys, array_keys((array)$value));
+		}
+		return array_unique($keys);
+	}
 }
 
+/**
+ * Represents a document received from the API
+ */
 class MendeleyDoc {
-	// Variables from http://dev.mendeley.com/docs/user-specific-resources/user-library-create-document
-	public $title;
-	public $type;
-	public $authors;
-	public $volume;
-	public $issue;
-	public $url;
-	public $doi;
-	public $pmid;
-	public $tags;
-	public $notes;
-	public $keywords;
-	public $pages;
-	public $year;
-	public $publisher;
 	public $abstract;
-	public $isbn;
-	public $issn;
+	public $authors;
+	public $city;
 	public $country;
+	public $discipline;
+	public $doi;
+	public $edition;
+	public $editors;
 	public $genre;
 	public $group_id;
+	public $identifiers;
+	public $institution;
+	public $isbn;
+	public $issn;
+	public $issue;
+	public $keywords;
+	public $notes;
+	public $pages;
+	public $pmid;
+	public $publication_outlet;
+	public $publisher;
+	public $tags;
+	public $title;
+	public $type;
+	public $url;
+	public $volume;
+	public $year;
 
 	public function toJson() {
 		return json_encode($this);
 	}
+
+	public function toArray() {
+		return (array)$this;
+	}
 }
 
+/**
+ * Helper to cache arbitrary variables esp. oauth tokens in the file system
+ */
 class MendeleyCache {
 	private $dir;
 	private $suffix;
 
 	/**
 	 * @param string $suffix
-	 * 	is added to the cache files
+	 * 	is added to the cache files, can be used to cache tokens for multiple consumer
 	 */
 	public function __construct($suffix = '') {
 		$this->dir = dirname(__FILE__) . '/cache/';
