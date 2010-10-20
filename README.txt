@@ -26,7 +26,6 @@ $doc->url = 'http://www.example.org/';
 $doc->tags = array('a', 'b');
 $doc->group_id = 504091;
 
-$mendeley = new Mendeley();
 $result = $mendeley->post('documents/', array('document' => (array)$doc));
 ?>
 
