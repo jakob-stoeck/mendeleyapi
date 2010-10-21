@@ -6,14 +6,13 @@ require_once('../Configuration.php');
 
 class AllTests extends TestSuite {
 	function AllTests() {
-		$dir = dirname(__FILE__) . '/'; // simpletest didn't include my files with only the filename, so I add the right path myself
-		
+		$dir = dirname(__FILE__) . '/';
+
 		$this->TestSuite('All tests');
 		$this->addFile($dir . 'MendeleyCacheTest.php');
 		$this->addFile($dir . 'MendeleyDocTest.php');
 		$this->addFile($dir . 'MendeleyBiblioDocTest.php');
-		// $this->addFile($dir . 'MendeleyUtilTest.php');
-		// $this->addFile($dir . 'MendeleyTest.php');
+		$this->addFile($dir . 'MendeleyUtilTest.php');
+		$this->addFile($dir . 'MendeleyTest.php');
 	}
 }
-?>

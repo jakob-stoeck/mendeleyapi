@@ -59,7 +59,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 
 	/**
 	 * Returns a map biblio keys => mendeley keys
-	 * 
+	 *
 	 * @param boolean $flip
 	 * 	set true to get mendeley => biblio
 	 * @return array
@@ -145,9 +145,9 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 
 	/**
 	 * Returns array usable by biblio
-	 * 
+	 *
 	 * You can build a MendeleyBiblioDoc from the MendeleyAPI and send it to biblio to save
-	 * 
+	 *
 	 * @return array
 	 */
 	public function toBiblio() {
@@ -164,9 +164,9 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 
 	/**
 	 * Constructs a MendeleyBiblioDoc from a Biblio node
-	 * 
+	 *
 	 * Can be sent to Mendeley to post a Document which was created in Biblio
-	 * 
+	 *
 	 * @return MendeleyBiblioDoc
 	 */
 	public static function constructWithNode($node) {
@@ -178,7 +178,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 		foreach($mendeleyKeys as $m) {
 			if(isset($map[$m])) {
 				$biblioKey = $map[$m];
-			} 
+			}
 
 			if(isset($node->$biblioKey)) {
 				$that->$m = $node->$biblioKey;

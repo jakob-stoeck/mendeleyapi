@@ -7,7 +7,6 @@ class MendeleyUtilTest extends UnitTestCase {
 		$this->assertEqual(count($collection->documents), $itemsPerPage);
 
 		$info = MendeleyUtil::arrayKeysRecursive($collection->documents);
-		var_dump($info);
 		$this->assertTrue(count($info) > 5);
 	}
 
@@ -16,9 +15,9 @@ class MendeleyUtilTest extends UnitTestCase {
 		$method = 'POST';
 		$headers = array();
 		$postVals = array();
-		
+
 		$response = MendeleyUtil::runCurl($url, $method, $headers, $postVals);
-		
+
 		$this->assertTrue(!empty($response));
 	}
 }

@@ -5,7 +5,7 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$url = 'http://www.example.org/';
 		$tags = array('a', 'b');
 		$groupId = 123;
-	
+
 		$doc = new MendeleyBiblioDoc();
 		$doc->authors = 'Jakob Stoeck';
 		$doc->title = $title;
@@ -13,16 +13,16 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$doc->tags = $tags;
 		$doc->group_id = $groupId;
 		$doc->type = 'Magazine Article';
-	
+
 		$biblio = $doc->toBiblio();
-	
+
 		$this->assertEqual($title, $doc->title);
 		$this->assertEqual($biblio['title'], $doc->title);
 		$this->assertEqual($biblio['biblio_url'], $doc->url);
 		$this->assertEqual($biblio['biblio_type'], 106);
 		$this->assertTrue(is_numeric($biblio['biblio_type']) && $biblio['biblio_type'] > 0);
 	}
-	
+
 	function testConstructWithNode() {
 		$node = self::nodeFactory();
 		$doc = MendeleyBiblioDoc::constructWithNode($node);
@@ -32,7 +32,7 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		// $this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR], $doc->authors); // TODO add 'name' => array key
 		$this->assertEqual($node->biblio_abst_e, $doc->abstract);
 	}
-	
+
 	function testUploadToMendeley() {
 		$node = self::nodeFactory();
 		$biblioDoc = MendeleyBiblioDoc::constructWithNode($node);
@@ -42,7 +42,7 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$this->assertTrue(isset($response->document_id) && is_numeric($response->document_id));
 
 		$doc = $mendeley->get('documents/' . $response->document_id);
-	
+
 		$this->assertEqual($node->title, $doc->title);
 		$this->assertEqual($node->biblio_type, MendeleyBiblioDoc::mendeleyToBiblioType($doc->type));
 		// $this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR], $doc->authors); // mendeley puts a space before the author name after upload. Strange.

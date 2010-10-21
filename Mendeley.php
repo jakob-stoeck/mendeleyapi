@@ -4,7 +4,8 @@ class Mendeley {
 	const MENDELEY_REQUEST_TOKEN_ENDPOINT = 'http://www.mendeley.com/oauth/request_token/';
 	const MENDELEY_ACCESS_TOKEN_ENDPOINT = 'http://www.mendeley.com/oauth/access_token/';
 	const MENDELEY_AUTHORIZE_ENDPOINT = 'http://www.mendeley.com/oauth/authorize/';
-	const MENDELEY_OAPI_URL = 'http://www.mendeley.com/oapi/library/';
+	const MENDELEY_OAPI_PRIVATE_URL = 'http://www.mendeley.com/oapi/library/';
+	const MENDELEY_OAPI_PUBLIC_URL = 'http://www.mendeley.com/oapi/';
 
 	/**
 	 * @var OAuthConsumer $consumer
@@ -32,7 +33,7 @@ class Mendeley {
 
 	/**
 	 * Returns true if we are on the OAuth callback page, i.e. the user granted permissions
-	 * 
+	 *
 	 * @return boolean
 	 */
 	private function isActiveCallback() {
@@ -45,7 +46,7 @@ class Mendeley {
 	private function getAccessToken() {
 		if(!$this->accessToken) {
 			$access_cache = $this->cache->get('access_token');
-		
+
 			if(isset($access_cache['oauth_token'])) {
 				$this->accessToken = new OAuthToken($access_cache['oauth_token'], $access_cache['oauth_token_secret']);
 			} else {
@@ -82,26 +83,38 @@ class Mendeley {
 
 	/**
 	 * Call Mendeley API
-	 * 
+	 *
 	 * You should cache frequent calls to this method in your application. At least GET calls.
-	 * 
+	 *
+	 * @param string $method
 	 * @param string $url
 	 * @param array $params
+	 * @param boolean $authenticate
 	 */
-	private function http($method, $url, $params = array()) {
-		$token = $this->getAccessToken($this->signatureMethod, $this->consumer);
-		$accReq = OAuthRequest::from_consumer_and_token($this->consumer, $token, $method, self::MENDELEY_OAPI_URL . $url, $params);
-		$accReq->sign_request($this->signatureMethod, $this->consumer, $token);
-
-		$headers = array();
-		if($method === 'GET') {
-			$url = $accReq->to_url();
-		} else {
-			$url = $accReq->get_normalized_http_url();
-			$params = $accReq->to_postdata();
+	private function http($method, $url, $params = array(), $authentication = true) {
+		if(!is_array($params)) {
+			throw new Exception('HTTP params need to be array in Mendeley::http');
 		}
 
-		if($request = MendeleyUtil::runCurl($url, $method, $headers, $params)) {
+		if($authentication) {
+			$url = self::MENDELEY_OAPI_PRIVATE_URL . $url;
+			$token = $this->getAccessToken($this->signatureMethod, $this->consumer);
+			$request = OAuthRequest::from_consumer_and_token($this->consumer, $token, $method, $url, $params);
+			$request->sign_request($this->signatureMethod, $this->consumer, $token);
+		} else {
+			$url = self::MENDELEY_OAPI_PUBLIC_URL . $url;
+			$params['consumer_key'] = $this->consumer->key;
+			$request = new OAuthRequest($method, $url, $params);
+		}
+
+		if($method === 'GET') {
+			$url = $request->to_url();
+		} else {
+			$url = $request->get_normalized_http_url();
+			$params = $request->to_postdata();
+		}
+
+		if($request = MendeleyUtil::runCurl($url, $method, array(), $params)) {
 			$request = json_decode($request);
 		}
 		return $request;
@@ -110,8 +123,8 @@ class Mendeley {
 	/**
 	 * convenience method, @see Mendeley::http
 	 */
-	public function get($url, $params = array()) {
-		return $this->http('GET', $url, $params);
+	public function get($url, $params = array(), $authentication = true) {
+		return $this->http('GET', $url, $params, $authentication);
 	}
 
 	/**
@@ -125,28 +138,66 @@ class Mendeley {
 	}
 
 	/**
-	 * enrich a group with its document details instead of only document ids
-	 * 
+	 * convenience method, @see Mendeley::http
+	 */
+	public function delete($url, $params = array()) {
+		return $this->http('DELETE', $url, $params);
+	}
+
+	/**
+	 * Enrich a group with its document details instead of only document ids
+	 *
 	 * @param string $collectionUrl
 	 * 	works with sharedcollection/id and collection/id
 	 * @param array $params
 	 */
 	public function getCollection($collectionUrl, $params = array()) {
 		$collection = $this->get($collectionUrl, $params);
-		$documents = array();
-
-		foreach($collection->document_ids as $id) {
-			$documents[$id] = $this->get('documents/' . $id);
-		}
-
-		$collection->documents = $documents;
-
+		$collection->documents = $this->loadDocumentDetails($collection->document_ids);
 		return $collection;
 	}
 
 	/**
+	 * Returns document content for all document ids
+	 *
+	 * @param array $documentIds
+	 * 	array of integers
+	 * @return array
+	 */
+	private function loadDocumentDetails($documentIds) {
+		$documents = array();
+		foreach($documentIds as $id) {
+			$documents[$id] = $this->get('documents/' . $id);
+		}
+		return $documents;
+	}
+
+	/**
+	 * Get collection details by knowing only the group id, not the collection type
+	 *
+	 * The Mendeley API differentiates groups between shared collections and collections but there is no API way to get the type of a collection by their group id. So we use this method to get a group transparently.
+	 *
+	 * @return StdClass
+	 * 	Output of get('(shared)collections/$groupId') and an added 'group_type'
+	 */
+	public function getGroupDocuments($groupId, $params = array()) {
+		$groupTypes = array(
+			'sharedcollections',
+			'collections'
+		);
+
+		foreach($groupTypes as $g) {
+			$collection = $this->get($g . '/' . $groupId, $params);
+			if(isset($collection->total_results)) {
+				$collection->group_type = $g;
+				return $collection;
+			}
+		}
+	}
+
+	/**
 	 * Gets OAuth (request or access) token
-	 * 
+	 *
 	 * @param OAuthSignatureMethod $this->signatureMethod
 	 * @param OAuthConsumer $consumer
 	 * @param OAuthToken $token
@@ -166,7 +217,7 @@ class Mendeley {
 class MendeleyUtil {
 	/**
 	 * Executes a CURL request
-	 * 
+	 *
 	 * @param $url string
 	 * 	URL to make request to
 	 * @param $method string
@@ -184,21 +235,27 @@ class MendeleyUtil {
 		curl_setopt($ch, CURLOPT_HEADER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 3);
-		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_VERBOSE, true);
 
-		if($method === 'POST'){
-			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $postvals);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		switch($method) {
+			case 'POST':
+				curl_setopt($ch, CURLOPT_POST, true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $postvals);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+			break;
+			case 'DELETE':
+				if(!empty($postvals)) {
+					$url = $url . '?' . $postvals;
+				}
+			break;
 		}
 
+		curl_setopt($ch, CURLOPT_URL, $url);
 		$response = curl_exec($ch);
 		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
 
 		if($text = MendeleyUtil::isError($http_code)) {
-			echo '<pre>' . $response . '</pre>';
 			$response = json_decode($response);
 			throw new Exception(sprintf('Error %d (%s): %s', $http_code, $text, $response->error));
 			$response = false;
@@ -210,7 +267,7 @@ class MendeleyUtil {
 	/**
 	 * Returns text-equivalent of HTTP error codes or false if no error
 	 * Messages from http://dev.mendeley.com/docs/http-responses-and-errors
-	 * 
+	 *
 	 * @param int $http_code
 	 * @return mixed
 	 */
@@ -219,7 +276,6 @@ class MendeleyUtil {
 			case 200: // ok
 			case 201: // created (post header)
 			case 204: // no content
-			case 0;
 				return false;
 			break;
 			case 400:
