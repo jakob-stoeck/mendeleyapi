@@ -11,7 +11,7 @@ Usage
 -----
 
 1. Download the OAuth library from http://code.google.com/p/oauth/
-2. Change settings in mendeleyapi/Configuration.php
+2. Copy Configuration.sample.php to Configuration.php and change settings 
 
 Use the library like this:
 
