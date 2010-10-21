@@ -20,16 +20,16 @@ Use the library like this:
     $mendeley = new Mendeley();
     
     // GET request to look up things
-    $request = $mendeley->get('sharedcollections/12345'); // $request is now a PHP object with all documents of the shared collection with this id
+    $result = $mendeley->get('sharedcollections/12345'); // $result is now a PHP object with all documents of the shared collection with this id
+    $result = $mendeley->getCollection('sharedcollections/12345'); // similar to above, only that $result->documents now contains also all document info
     
     // POST request to change things, in this case to add a document to a group (collection)
     $doc = new MendeleyDoc();
     $doc->title = 'Example Title';
     $doc->url = 'http://www.example.org/';
-    $doc->tags = array('a', 'b');
     $doc->group_id = 504091;
     
-    $result = $mendeley->post('documents/', $doc->toParams()));
+    $result = $mendeley->post('documents/', $doc->toParams());
     ?>
 
 Versioning
