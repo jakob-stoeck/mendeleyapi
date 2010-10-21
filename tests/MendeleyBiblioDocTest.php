@@ -38,7 +38,7 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$biblioDoc = MendeleyBiblioDoc::constructWithNode($node);
 
 		$mendeley = new Mendeley();
-		$response = $mendeley->post('documents', array('document' => $biblioDoc->toArray()));
+		$response = $mendeley->post('documents', $biblioDoc->toParams());
 		$this->assertTrue(isset($response->document_id) && is_numeric($response->document_id));
 
 		$doc = $mendeley->get('documents/' . $response->document_id);

@@ -1,10 +1,10 @@
-Mendeley API Library v1.0
-=========================
+Mendeley API Client
+===================
 
 About
 -----
 
-You can use this library to easily query the Mendeley API (http://dev.mendeley.com/docs/) from your PHP code.
+You can use this client to easily query the Mendeley API (http://dev.mendeley.com/docs/) from your PHP code.
 It accepts URLs from "user specific resources", handles the Authentication via OAuth and returns a PHP object with its results. The authentication is cached.
 
 Usage
@@ -29,7 +29,12 @@ Use the library like this:
     $doc->tags = array('a', 'b');
     $doc->group_id = 504091;
     
-    $result = $mendeley->post('documents/', array('document' => (array)$doc));
+    $result = $mendeley->post('documents/', $doc->toParams()));
     ?>
-    
+
+Versioning
+----------
+
+Semantic versioning: http://semver.org/
+
 © 2010 Jakob Stoeck

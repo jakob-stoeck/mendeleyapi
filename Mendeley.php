@@ -290,8 +290,8 @@ class MendeleyDoc {
 		return json_encode($this);
 	}
 
-	public function toArray() {
-		return (array)$this;
+	public function toParams() {
+		return array('document' => (array)$this);
 	}
 }
 

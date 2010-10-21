@@ -24,7 +24,7 @@ class MendeleyTest extends UnitTestCase {
 		$doc->group_id = $groupId;
 
 		$mendeley = new Mendeley();
-		$result = $mendeley->post('documents/', array('document' => (array)$doc));
+		$result = $mendeley->post('documents/', $doc->toParams());
 
 		$this->assertTrue(!empty($result));
 		$this->assertTrue(isset($result->document_id) && is_numeric($result->document_id));
