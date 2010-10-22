@@ -10,15 +10,15 @@ class MendeleyDocTest extends UnitTestCase {
 		$doc->title = $title;
 		$doc->url = $url;
 		$doc->tags = $tags;
-		$doc->group_id = $groupId;
+		$doc->groupId = $groupId;
 
 		$json = $doc->toJson();
 		$doc2 = json_decode($json);
 
-		$this->assertTrue($doc2->title === $title);
-		$this->assertTrue($doc2->url === $url);
-		$this->assertTrue($doc2->tags === $tags);
-		$this->assertTrue($doc2->group_id === $groupId);
+		$this->assertEqual($doc2->title, $title);
+		$this->assertEqual($doc2->url, $url);
+		$this->assertEqual($doc2->tags, $tags);
+		$this->assertEqual($doc2->groupId, $groupId);
 	}
 
 	function testToParams() {
@@ -31,7 +31,7 @@ class MendeleyDocTest extends UnitTestCase {
 		$doc->title = $title;
 		$doc->url = $url;
 		$doc->tags = $tags;
-		$doc->group_id = $groupId;
+		$doc->groupId = $groupId;
 
 		$doc = $doc->toParams();
 
@@ -39,6 +39,14 @@ class MendeleyDocTest extends UnitTestCase {
 		$this->assertEqual($doc['document']['title'], $title);
 		$this->assertEqual($doc['document']['url'], $url);
 		$this->assertEqual($doc['document']['tags'], $tags);
-		$this->assertEqual($doc['document']['group_id'], $groupId);
+		$this->assertEqual($doc['document']['groupId'], $groupId);
+	}
+
+	function testConstructWithDocumentId() {
+		$documentId = '646077082';
+		$doc = MendeleyDoc::constructWithDocumentId($documentId);
+		$this->assertEqual($doc->title, 'A Square Is Not a Rectangle');
+		$this->assertEqual($doc->year, 2009);
+		$this->assertEqual($doc->documentId, $documentId);
 	}
 }

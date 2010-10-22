@@ -1,4 +1,28 @@
 <?php
+/**
+ *   Mendeley API Client
+ *
+ *   Copyright (C) 2010  Jakob Stoeck
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License along
+ *   with this program; if not, write to the Free Software Foundation, Inc.,
+ *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ */
+
+/**
+ * MendeleyDoc extension to work together with Biblio (Drupal module)
+ */
 class MendeleyBiblioDoc extends MendeleyDoc {
 	/**
 	 * Contributor types
@@ -58,6 +82,24 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 	const BIBLIO_MISCELLANEOUS_SECTION = 130;
 
 	/**
+	 * MendeleyDoc properties I haven't mapped so far
+	 * Ideally all should be mapped in the future
+	 */
+	public static function notMapped() {
+		return array(
+			'city',
+			'country',
+			'discipline',
+			'genre',
+			'group_id',
+			'identifiers',
+			'institution',
+			'pmid',
+			'tags',
+		);
+	}
+
+	/**
 	 * Returns a map biblio keys => mendeley keys
 	 *
 	 * @param boolean $flip
@@ -65,18 +107,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 	 * @return array
 	 */
 	private static function map($flip = false) {
-		// MendeleyDoc properties I haven't mapped so far:
-		// public $city;
-		// public $country;
-		// public $discipline;
-		// public $editors;
-		// public $genre;
-		// public $group_id;
-		// public $identifiers;
-		// public $institution;
-		// public $pmid;
-		// public $publication_outlet;
-		// public $tags;
+		// @see notMapped() for properties I haven't mapped so far:
 
 		$biblioToMendeleyFields = array_filter(array(
 			'biblio_abst_e' => 'abstract',
@@ -84,11 +115,11 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 			'biblio_accession_number' => null,
 			'biblio_access_date' => null,
 			'biblio_alternate_title' => null,
-			'biblio_authors' => 'authors', // biblio sends a $node->biblio_contributors which includes authors, editors, @see contributor types
 			'biblio_auth_address' => null,
 			'biblio_call_number' => null,
 			'biblio_citekey' => null,
 			'biblio_coins' => null,
+			'biblio_contributors' => null, // biblio sends a $node->biblio_contributors which includes authors, editors, @see contributor types
 			'biblio_corp_authors' => null,
 			'biblio_custom1' => null,
 			'biblio_custom2' => null,
@@ -106,6 +137,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 			'biblio_keywords' => 'keywords',
 			'biblio_label' => null,
 			'biblio_lang' => null,
+			'biblio_mendeley_doc_id' => 'documentId',
 			'biblio_notes' => 'notes',
 			'biblio_number' => null,
 			'biblio_number_of_volumes' => null,
@@ -113,7 +145,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 			'biblio_other_author_affiliations' => null,
 			'biblio_other_number' => null,
 			'biblio_pages' => 'pages',
-			'biblio_place_published' => null,
+			'biblio_place_published' => 'publication_outlet',
 			'biblio_publisher' => 'publisher',
 			'biblio_refereed' => null,
 			'biblio_remote_db_name' => null,
@@ -150,16 +182,54 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 	 *
 	 * @return array
 	 */
-	public function toBiblio() {
-		$map = self::map();
+	public function toNode() {
+		$node = self::map();
 
-		foreach($map as $biblioKey => &$mendeley) {
+		foreach($node as $biblioKey => &$mendeley) {
 			$mendeley = $this->$mendeley;
 		}
+		$node = (object)array_filter($node);
 
-		$map['biblio_type'] = self::mendeleyToBiblioType($this->type);
+		$node->type = 'biblio';
+		$node->biblio_type = self::mendeleyToBiblioType($this->type);
+		if(!empty($this->authors)) {
+			foreach((array)$this->authors as $a) {
+				$node->biblio_contributors[self::BIBLIO_AUTHOR][] = array('name' => $a);
+			}
+		}
+		if(!empty($this->editors)) {
+			foreach((array)$this->editors as $a) {
+				$node->biblio_contributors[self::BIBLIO_EDITOR][] = array('name' => $a);
+			}
+		}
 
-		return array_filter($map);
+		return $node;
+	}
+
+	/**
+	 * Instantiate a Mendeley Document by its internal document id
+	 * 
+	 * This almost an exact copy of @see MendeleyDoc::constructWithDocumentId because get_called_class is only available in PHP >= 5.3
+	 * 
+	 * @param string $documentId
+	 * 	sent by Mendeley in e.g. collections/*collectionId*
+	 */
+	public static function constructWithDocumentId($documentId) {
+		$that = new MendeleyBiblioDoc();
+		$mendeley = new Mendeley();
+
+		if($remote = $mendeley->get('documents/' . $documentId)) {
+			$localParams = array_keys(get_object_vars($that));
+			$remoteParams = array_keys(get_object_vars($remote));
+			$match = array_intersect($localParams, $remoteParams);
+			foreach($match as $name) {
+				if(!empty($remote->$name)) {
+					$that->$name = $remote->$name;
+				}
+			}
+			$that->documentId = $documentId;
+		}
+		return $that;
 	}
 
 	/**
@@ -169,7 +239,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 	 *
 	 * @return MendeleyBiblioDoc
 	 */
-	public static function constructWithNode($node) {
+	public function constructWithNode($node) {
 		$that = new MendeleyBiblioDoc();
 
 		$mendeleyKeys = array_keys(get_object_vars($that));
@@ -215,6 +285,10 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 				return self::BIBLIO_MAGAZINE_ARTICLE;
 			break;
 
+			case 'Web Page':
+				return self::BIBLIO_WEB_ARTICLE;
+			break;
+
 			default:
 				return self::BIBLIO_MISCELLANEOUS;
 		}
@@ -228,6 +302,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 	public static function biblioToMendeleyType($biblioType) {
 		$biblioToMendeley = array(
 			self::BIBLIO_MAGAZINE_ARTICLE => 'Magazine Article',
+			self::BIBLIO_WEB_ARTICLE => 'Web Page',
 		);
 
 		if(isset($biblioToMendeley[$biblioType])) {

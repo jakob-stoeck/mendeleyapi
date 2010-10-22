@@ -1,26 +1,26 @@
 <?php
 class MendeleyBiblioDocTest extends UnitTestCase {
-	function testToBiblio() {
+	function testToNode() {
 		$title = 'Example Title';
 		$url = 'http://www.example.org/';
 		$tags = array('a', 'b');
 		$groupId = 123;
 
 		$doc = new MendeleyBiblioDoc();
-		$doc->authors = 'Jakob Stoeck';
+		$doc->authors = array('Jakob Stoeck');
 		$doc->title = $title;
 		$doc->url = $url;
 		$doc->tags = $tags;
-		$doc->group_id = $groupId;
+		$doc->groupId = $groupId;
 		$doc->type = 'Magazine Article';
 
-		$biblio = $doc->toBiblio();
-
+		$node = $doc->toNode();
 		$this->assertEqual($title, $doc->title);
-		$this->assertEqual($biblio['title'], $doc->title);
-		$this->assertEqual($biblio['biblio_url'], $doc->url);
-		$this->assertEqual($biblio['biblio_type'], 106);
-		$this->assertTrue(is_numeric($biblio['biblio_type']) && $biblio['biblio_type'] > 0);
+		$this->assertEqual($node->title, $doc->title);
+		$this->assertEqual($node->biblio_url, $doc->url);
+		$this->assertEqual($node->biblio_type, 106);
+		$this->assertEqual($node->biblio_contributors[1][0]['name'], $doc->authors[0]);
+		$this->assertTrue(is_numeric($node->biblio_type) && $node->biblio_type > 0);
 	}
 
 	function testConstructWithNode() {
@@ -29,7 +29,7 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 
 		$this->assertEqual($node->title, $doc->title);
 		$this->assertEqual($node->biblio_type, MendeleyBiblioDoc::mendeleyToBiblioType($doc->type));
-		// $this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR], $doc->authors); // TODO add 'name' => array key
+		$this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR][0]['name'], $doc->authors[0]);
 		$this->assertEqual($node->biblio_abst_e, $doc->abstract);
 	}
 
@@ -47,6 +47,36 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$this->assertEqual($node->biblio_type, MendeleyBiblioDoc::mendeleyToBiblioType($doc->type));
 		// $this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR], $doc->authors); // mendeley puts a space before the author name after upload. Strange.
 		$this->assertEqual($node->biblio_abst_e, $doc->abstract);
+	}
+
+	function testConstructWithDocumentId() {
+		$documentId = '646077082';
+		$doc = MendeleyBiblioDoc::constructWithDocumentId($documentId);
+
+		$this->assertEqual($doc->title, 'A Square Is Not a Rectangle');
+		$this->assertEqual($doc->year, 2009);
+		$this->assertEqual($doc->documentId, $documentId);
+	}
+
+
+	function testToNodeByConstructWithDocumentId() {
+		$documentId = '646077082';
+		$doc = MendeleyBiblioDoc::constructWithDocumentId($documentId);
+		$node = $doc->toNode();
+		$this->assertEqual($doc->title, $node->title);
+		$this->assertEqual($documentId, $node->biblio_mendeley_doc_id);
+		$this->assertEqual(reset($doc->authors), reset($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR][0]));
+		$this->assertEqual('biblio', $node->type);
+	}
+
+	function testBiblioToMendeleyType() {
+		$mendeleyType = 'Web Page';
+		$biblioType = MendeleyBiblioDoc::BIBLIO_WEB_ARTICLE;
+		$biblio = MendeleyBiblioDoc::mendeleyToBiblioType($mendeleyType);
+		$this->assertEqual($biblio, $biblioType);
+
+		$mendeley = MendeleyBiblioDoc::biblioToMendeleyType($biblioType);
+		$this->assertEqual($mendeley, $mendeleyType);
 	}
 
 	static function nodeFactory() {

@@ -1,4 +1,24 @@
 <?php
+/**
+ *   Mendeley API Client
+ *
+ *   Copyright (C) 2010  Jakob Stoeck
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License along
+ *   with this program; if not, write to the Free Software Foundation, Inc.,
+ *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ */
 
 class Mendeley {
 	const MENDELEY_REQUEST_TOKEN_ENDPOINT = 'http://www.mendeley.com/oauth/request_token/';
@@ -319,11 +339,12 @@ class MendeleyDoc {
 	public $city;
 	public $country;
 	public $discipline;
+	public $documentId;
 	public $doi;
 	public $edition;
 	public $editors;
 	public $genre;
-	public $group_id;
+	public $groupId;
 	public $identifiers;
 	public $institution;
 	public $isbn;
@@ -333,7 +354,7 @@ class MendeleyDoc {
 	public $notes;
 	public $pages;
 	public $pmid;
-	public $publication_outlet;
+	public $publication_outlet; // this is snake_case because it's like that in the API
 	public $publisher;
 	public $tags;
 	public $title;
@@ -341,6 +362,30 @@ class MendeleyDoc {
 	public $url;
 	public $volume;
 	public $year;
+
+	/**
+	 * Instantiate a Mendeley Document by its internal document id
+	 *
+	 * @param string $documentId
+	 * 	sent by Mendeley in e.g. collections/*collectionId*
+	 */
+	public static function constructWithDocumentId($documentId) {
+		$that = new MendeleyDoc();
+		$mendeley = new Mendeley();
+
+		if($remote = $mendeley->get('documents/' . $documentId)) {
+			$localParams = array_keys(get_object_vars($that));
+			$remoteParams = array_keys(get_object_vars($remote));
+			$match = array_intersect($localParams, $remoteParams);
+			foreach($match as $name) {
+				if(!empty($remote->$name)) {
+					$that->$name = $remote->$name;
+				}
+			}
+			$that->documentId = $documentId;
+		}
+		return $that;
+	}
 
 	public function toJson() {
 		return json_encode($this);

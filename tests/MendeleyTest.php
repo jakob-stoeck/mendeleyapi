@@ -59,8 +59,12 @@ class MendeleyTest extends UnitTestCase {
 				'name' => 'Example Collection'
 			)
 		);
-
-		$result = $this->mendeley->post('sharedcollections', $sharedCollection);
+		
+		try {
+			$result = $this->mendeley->post('sharedcollections', $sharedCollection);
+		} catch(Exception $e) {
+			var_dump($e->getMessage());
+		}
 
 		$this->assertTrue(!empty($result));
 	}
@@ -76,5 +80,13 @@ class MendeleyTest extends UnitTestCase {
 		$response = $this->mendeley->getGroupDocuments(164791);
 		$this->assertTrue(isset($response->total_results));
 		$this->assertTrue(isset($response->group_type));
+	}
+
+	function testGetManyDocuments() {
+		$many = 10000;
+		$response = $this->mendeley->getGroupDocuments(164791, array('items' => $many));
+		$this->assertEqual($response->total_pages, 1);
+		$this->assertTrue($response->total_results < $many);
+		$this->assertEqual(count($response->document_ids), $response->total_results);
 	}
 }
