@@ -93,9 +93,6 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 			'genre',
 			'group_id',
 			'identifiers',
-			'institution',
-			'pmid',
-			'tags',
 		);
 	}
 
@@ -107,7 +104,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 	 * @return array
 	 */
 	private static function map($flip = false) {
-		// @see notMapped() for properties I haven't mapped so far:
+		// @see notMapped() for properties I haven't mapped so far
 
 		$biblioToMendeleyFields = array_filter(array(
 			'biblio_abst_e' => 'abstract',
@@ -147,6 +144,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 			'biblio_pages' => 'pages',
 			'biblio_place_published' => 'publication_outlet',
 			'biblio_publisher' => 'publisher',
+			'biblio_pubmed_id' => 'pmid',
 			'biblio_refereed' => null,
 			'biblio_remote_db_name' => null,
 			'biblio_remote_db_provider' => null,
@@ -166,6 +164,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 			'biblio_volume' => 'volume',
 			'biblio_year' => 'year',
 			'title' => 'title',
+			'biblio_mendeley_tags' => 'tags', // proprietary addition to add taxonomy terms to a node
 		));
 
 		if($flip) {
@@ -180,9 +179,11 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 	 *
 	 * You can build a MendeleyBiblioDoc from the MendeleyAPI and send it to biblio to save
 	 *
+	 * @param int $nid
+	 * 	node id to add to the object to update an existing node
 	 * @return array
 	 */
-	public function toNode() {
+	public function toNode($nid = null) {
 		$node = self::map();
 
 		foreach($node as $biblioKey => &$mendeley) {
@@ -202,15 +203,21 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 				$node->biblio_contributors[self::BIBLIO_EDITOR][] = array('name' => $a);
 			}
 		}
+		if(!empty($this->institution)) {
+			$node->biblio_contributors[self::BIBLIO_CORPORATE_AUTHOR][] = array('name' => $this->institution);
+		}
+		if($nid !== null) {
+			$node->nid = $nid;
+		}
 
 		return $node;
 	}
 
 	/**
-	 * Instantiate a Mendeley Document by its internal document id
-	 * 
+	 * Instantiates a Mendeley Document by its internal document id
+	 *
 	 * This almost an exact copy of @see MendeleyDoc::constructWithDocumentId because get_called_class is only available in PHP >= 5.3
-	 * 
+	 *
 	 * @param string $documentId
 	 * 	sent by Mendeley in e.g. collections/*collectionId*
 	 */
@@ -269,6 +276,10 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 
 				case self::BIBLIO_EDITOR:
 					$that->editors = $contribs;
+				break;
+
+				case self::BIBLIO_CORPORATE_AUTHOR:
+					$that->institution = reset($contribs);
 				break;
 			}
 		}

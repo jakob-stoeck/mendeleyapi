@@ -137,6 +137,7 @@ class Mendeley {
 		if($request = MendeleyUtil::runCurl($url, $method, array(), $params)) {
 			$request = json_decode($request);
 		}
+
 		return $request;
 	}
 
@@ -276,6 +277,9 @@ class MendeleyUtil {
 		curl_close($ch);
 
 		if($text = MendeleyUtil::isError($http_code)) {
+			if(Configuration::DEBUG > 0) {
+				var_dump(compact('http_code'));
+			}
 			$response = json_decode($response);
 			throw new Exception(sprintf('Error %d (%s): %s', $http_code, $text, $response->error));
 			$response = false;

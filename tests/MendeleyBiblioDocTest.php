@@ -42,19 +42,18 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$this->assertTrue(isset($response->document_id) && is_numeric($response->document_id));
 
 		$doc = $mendeley->get('documents/' . $response->document_id);
-
 		$this->assertEqual($node->title, $doc->title);
 		$this->assertEqual($node->biblio_type, MendeleyBiblioDoc::mendeleyToBiblioType($doc->type));
-		// $this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR], $doc->authors); // mendeley puts a space before the author name after upload. Strange.
+		// $this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR][0]['name'], reset($doc->authors)); // mendeley puts a space before the author name after upload. Strange.
 		$this->assertEqual($node->biblio_abst_e, $doc->abstract);
 	}
 
 	function testConstructWithDocumentId() {
 		$documentId = '646077082';
 		$doc = MendeleyBiblioDoc::constructWithDocumentId($documentId);
-
 		$this->assertEqual($doc->title, 'A Square Is Not a Rectangle');
 		$this->assertEqual($doc->year, 2009);
+		$this->assertEqual($doc->tags, array('lsp', 'object oriented programming'));
 		$this->assertEqual($doc->documentId, $documentId);
 	}
 
