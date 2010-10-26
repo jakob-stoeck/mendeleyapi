@@ -164,7 +164,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 			'biblio_volume' => 'volume',
 			'biblio_year' => 'year',
 			'title' => 'title',
-			'biblio_mendeley_tags' => 'tags', // proprietary addition to add taxonomy terms to a node
+			'tags' => 'tags', // proprietary addition to add taxonomy terms to a node
 		));
 
 		if($flip) {

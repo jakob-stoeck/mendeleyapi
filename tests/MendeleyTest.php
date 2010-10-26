@@ -7,13 +7,11 @@ class MendeleyTest extends UnitTestCase {
 		$this->mendeley = new Mendeley();
 	}
 
-	function testGet() {
+	function testGetSharedCollectionDocuments() {
 		$sharedCollectionId = 164791;
 		$url = 'sharedcollections/' . $sharedCollectionId;
 		$params = array('page' => 1, 'items' => 1);
-
 		$result = $this->mendeley->get($url, $params);
-
 		$this->assertEqual((int)$result->shared_collection_id, $sharedCollectionId);
 	}
 
@@ -45,6 +43,17 @@ class MendeleyTest extends UnitTestCase {
 	// 	$this->assertEqual($result->title, 'Example Title');
 	// }
 
+	function testGetDocDetails() {
+		$title = 'Example Title';
+		$url = 'http://www.example.org/';
+		$tags = array('a', 'b');
+
+		$result = $this->mendeley->get('documents/' . $this->tmp['documentId']);
+		$this->assertTrue($result->title, $title);
+		$this->assertTrue($result->url, $url);
+		$this->assertTrue($result->tags, $tags);
+	}
+
 	function testGetSearchUnauthorized() {
 		$url = 'documents/search/' . urlencode('Example Title');
 		$itemsPerPage = 5;
@@ -62,16 +71,20 @@ class MendeleyTest extends UnitTestCase {
 		
 		try {
 			$result = $this->mendeley->post('sharedcollections', $sharedCollection);
+			$this->assertTrue(isset($result->shared_collection_id));
+			$this->tmp['shared_collection_id'] = $result->shared_collection_id;
 		} catch(Exception $e) {
 			var_dump($e->getMessage());
 		}
+	}
 
-		$this->assertTrue(!empty($result));
+	function testDeleteCollection() {
+		$response = $this->mendeley->delete('sharedcollections/' . $this->tmp['shared_collection_id']);
+		$this->assertTrue(empty($response));
 	}
 
 	function testDeleteDocument() {
 		$this->assertTrue(isset($this->tmp['documentId']) && is_numeric($this->tmp['documentId']));
-
 		$response = $this->mendeley->delete('documents/' . $this->tmp['documentId']);
 		$this->assertTrue(empty($response));
 	}

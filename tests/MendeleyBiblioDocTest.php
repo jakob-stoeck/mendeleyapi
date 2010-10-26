@@ -19,6 +19,7 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$this->assertEqual($node->title, $doc->title);
 		$this->assertEqual($node->biblio_url, $doc->url);
 		$this->assertEqual($node->biblio_type, 106);
+		$this->assertEqual($node->tags, $tags);
 		$this->assertEqual($node->biblio_contributors[1][0]['name'], $doc->authors[0]);
 		$this->assertTrue(is_numeric($node->biblio_type) && $node->biblio_type > 0);
 	}
@@ -56,7 +57,6 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$this->assertEqual($doc->tags, array('lsp', 'object oriented programming'));
 		$this->assertEqual($doc->documentId, $documentId);
 	}
-
 
 	function testToNodeByConstructWithDocumentId() {
 		$documentId = '646077082';
