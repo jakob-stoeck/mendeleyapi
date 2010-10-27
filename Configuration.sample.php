@@ -21,30 +21,25 @@
  */
 
 class Configuration {
-	/**
-	 * change the path to your OAuth library installation from http://code.google.com/p/oauth/ or add it to your PHP include path
-	 */
-	const PATH_TO_OAUTH = 'oauth/OAuth.php'; // change this
+	const DEBUG = 0;
+	const CONSUMER_TYPE = 'default';
 
 	public static function getPathToOauth() {
-		if(file_exists(self::PATH_TO_OAUTH)) {
-			return self::PATH_TO_OAUTH;
+		$pathToOauth = $_SERVER['DOCUMENT_ROOT'] . '/sites/all/libraries/oauth/OAuth.php'; // change the path to your OAuth library installation from http://code.google.com/p/oauth/
+
+		if(file_exists($pathToOauth)) {
+			return $pathToOauth;
 		} else {
-			throw new Exception(sprintf('OAuth library not found at: %s. Please install it or change the path in %s', self::PATH_TO_OAUTH, __FILE__));
+			throw new Exception(sprintf('OAuth library not found at: %s. Please install it or change the path in mendeleyapi/config.php.', $pathToOauth));
 		}
 	}
 
-	public static function getConsumer($type = 'default') {
+	public static function getConsumer() {
 		$consumer['default'] = array(
-			'key' => 'CHANGE_ME', // change this
-			'secret' => 'CHANGE_ME' // change this
+			'key' => 'CHANGE_ME',
+			'secret' => 'CHANGE_ME'
 		);
 
-		$consumer['test'] = array(
-			'key' => '',
-			'secret' => ''
-		);
-
-		return array('key' => $consumer[$type]['key'], 'secret' => $consumer[$type]['secret']);
+		return array('key' => $consumer[self::CONSUMER_TYPE]['key'], 'secret' => $consumer[self::CONSUMER_TYPE]['secret']);
 	}
 }
