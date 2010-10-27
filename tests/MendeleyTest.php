@@ -92,7 +92,7 @@ class MendeleyTest extends UnitTestCase {
 	function testGetGroupDocuments() {
 		$response = $this->mendeley->getGroupDocuments(164791);
 		$this->assertTrue(isset($response->total_results));
-		$this->assertTrue(isset($response->group_type));
+		$this->assertEqual($response->group_type, 'sharedcollections');
 	}
 
 	function testGetManyDocuments() {

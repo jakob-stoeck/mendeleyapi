@@ -93,6 +93,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 			'genre',
 			'group_id',
 			'identifiers',
+			'year', // TODO: we cannot check on year right now because biblio makes it "Submitted" if no year present
 		);
 	}
 
@@ -318,8 +319,6 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 
 		if(isset($biblioToMendeley[$biblioType])) {
 			return $biblioToMendeley[$biblioType];
-		} else {
-			return 'misc';
 		}
 	}
 }
