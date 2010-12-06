@@ -43,6 +43,11 @@ Use the library like this:
     }
     ?>
 
+Testing
+-------
+
+Runs with Simpletest. Point your browser to _webroot_/mendeleyapi/tests/all_tests.php
+
 Versioning
 ----------
 

@@ -41,10 +41,21 @@ class Mendeley {
 	private $signatureMethod;
 	private $cache;
 
-	public function __construct() {
+	/**
+	 * @param string
+	 * 	consumer key, you may optionally give a consumer key and secret to the class constructor which overrides the default values in the configuration file.
+	 * @param string
+	 * 	consumer secret
+	 */
+	public function __construct($consumerKey = null, $consumerSecret = null) {
 		require_once 'Configuration.php';
 		require_once Configuration::getPathToOauth();
-		$consumer = Configuration::getConsumer();
+
+		if($consumerKey !== null && $consumerSecret !== null) {
+			$consumer = array('key' => $consumerKey, 'secret' => $consumerSecret);
+		} else {
+			$consumer = Configuration::getConsumer();
+		}
 
 		$this->consumer = new OAuthConsumer($consumer['key'], $consumer['secret'], null);
 		$this->signatureMethod = new OAuthSignatureMethod_HMAC_SHA1();

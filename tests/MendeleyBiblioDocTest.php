@@ -97,4 +97,14 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 
 		return $node;
 	}
+
+	function testUnknownBiblioTypeIsMisc() {
+		$mendeleyType = 'Miscellaneous';
+		$biblioType = MendeleyBiblioDoc::BIBLIO_MISCELLANEOUS;
+		$biblio = MendeleyBiblioDoc::mendeleyToBiblioType('unknown type');
+		$this->assertEqual($biblio, $biblioType);
+
+		$mendeley = MendeleyBiblioDoc::biblioToMendeleyType('unknown type');
+		$this->assertEqual($mendeley, $mendeleyType);
+	}
 }

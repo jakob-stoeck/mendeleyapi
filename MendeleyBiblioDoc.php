@@ -289,36 +289,65 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 	}
 
 	/**
-	 * @todo more types
+	 * Convenience method for @see MendeleyBiblioDoc::biblioToMendeleyType
 	 */
 	public static function mendeleyToBiblioType($mendeleyType) {
-		switch($mendeleyType) {
-			case 'Magazine Article':
-				return self::BIBLIO_MAGAZINE_ARTICLE;
-			break;
-
-			case 'Web Page':
-				return self::BIBLIO_WEB_ARTICLE;
-			break;
-
-			default:
-				return self::BIBLIO_MISCELLANEOUS;
-		}
+		return self::biblioToMendeleyType($mendeleyType, true);
 	}
 
 	/**
-	 * @todo more types
+	 * Maps biblio publication types to mendeley publication types.
+	 *
+	 * The only ones I've seen in the wild of Mendeley are those "confirmed". The other ones are pure guesswork but should work in most cases, since the wording is very often the same.
+	 *
+	 * @param mixed
+	 * 	biblio type id if flip is false, else Mendeley type string
 	 * @return int
-	 * 	biblio type id
+	 * 	biblio/mendeley type id/string
 	 */
-	public static function biblioToMendeleyType($biblioType) {
+	public static function biblioToMendeleyType($type, $flip = false) {
 		$biblioToMendeley = array(
-			self::BIBLIO_MAGAZINE_ARTICLE => 'Magazine Article',
-			self::BIBLIO_WEB_ARTICLE => 'Web Page',
+			self::BIBLIO_BOOK => 'Book', // confirmed
+			self::BIBLIO_BOOK_CHAPTER => 'Book Section', // confirmed
+			self::BIBLIO_JOURNAL_ARTICLE => 'Journal Article', // confirmed
+			self::BIBLIO_CONFERENCE_PAPER => 'Conference Paper',
+			self::BIBLIO_CONFERENCE_PROCEEDINGS => 'Conference Proceedings', // confirmed
+			self::BIBLIO_NEWSPAPER_ARTICLE => 'Newspaper Article',
+			self::BIBLIO_MAGAZINE_ARTICLE => 'Magazine Article', // confirmed
+			self::BIBLIO_WEB_ARTICLE => 'Web Page', // confirmed
+			self::BIBLIO_THESIS => 'Thesis',
+			self::BIBLIO_REPORT => 'Report',
+			self::BIBLIO_FILM => 'Film',
+			self::BIBLIO_BROADCAST => 'Broadcast',
+			self::BIBLIO_ARTWORK => 'Artwork',
+			self::BIBLIO_SOFTWARE => 'Software',
+			self::BIBLIO_AUDIOVISUAL => 'Audiovisual',
+			self::BIBLIO_HEARING => 'Hearing',
+			self::BIBLIO_CASE => 'Case',
+			self::BIBLIO_BILL => 'Bill',
+			self::BIBLIO_STATUTE => 'Statute',
+			self::BIBLIO_PATENT => 'Patent',
+			self::BIBLIO_PERSONAL => 'Personal',
+			self::BIBLIO_MANUSCRIPT => 'Manuscript',
+			self::BIBLIO_MAP => 'Map',
+			self::BIBLIO_CHART => 'Chart',
+			self::BIBLIO_UNPUBLISHED => 'Unpublished',
+			self::BIBLIO_DATABASE => 'Database',
+			self::BIBLIO_GOVERNMENT_REPORT => 'Government Report',
+			self::BIBLIO_CLASSICAL => 'Classical',
+			self::BIBLIO_LEGAL_RULING => 'Legal Ruling',
+			self::BIBLIO_MISCELLANEOUS => 'Miscellaneous',
+			self::BIBLIO_MISCELLANEOUS_SECTION => 'Miscellaneous Section',
 		);
 
-		if(isset($biblioToMendeley[$biblioType])) {
-			return $biblioToMendeley[$biblioType];
+		if($flip) {
+			$biblioToMendeley = array_flip($biblioToMendeley);
+		}
+
+		if(isset($biblioToMendeley[$type])) {
+			return $biblioToMendeley[$type];
+		} else {
+			return ($flip ? self::BIBLIO_MISCELLANEOUS : 'Miscellaneous');
 		}
 	}
 }

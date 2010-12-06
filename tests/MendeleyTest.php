@@ -14,6 +14,24 @@ class MendeleyTest extends UnitTestCase {
 		$result = $this->mendeley->get($url, $params);
 		$this->assertEqual((int)$result->shared_collection_id, $sharedCollectionId);
 	}
+	
+	/**
+	 * Used to get as many distinct publication types as possible. Should only be used manually.
+	 * @depends testGetSharedCollectionDocuments
+	 */
+	function getTypes() {
+		$docs = array();
+		foreach($result->document_ids as $id) {
+			$docs[] = $this->mendeley->get('documents/' . $id);
+		}
+		
+		$types = array();
+		foreach($docs as $d) {
+			$types[$d->type] = null;
+		}
+		
+		echo var_dump($types);
+	}
 
 	function testCreateDocument() {
 		$title = 'Example Title';
@@ -49,9 +67,9 @@ class MendeleyTest extends UnitTestCase {
 		$tags = array('a', 'b');
 
 		$result = $this->mendeley->get('documents/' . $this->tmp['documentId']);
-		$this->assertTrue($result->title, $title);
-		$this->assertTrue($result->url, $url);
-		$this->assertTrue($result->tags, $tags);
+		$this->assertEqual($result->title, $title);
+		$this->assertEqual($result->url, $url);
+		$this->assertEqual($result->tags, $tags);
 	}
 
 	function testGetSearchUnauthorized() {
