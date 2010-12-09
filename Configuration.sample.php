@@ -30,7 +30,7 @@ class Configuration {
 		if(file_exists($pathToOauth)) {
 			return $pathToOauth;
 		} else {
-			throw new Exception(sprintf('OAuth library not found at: %s. Please install it or change the path in mendeleyapi/config.php.', $pathToOauth));
+			throw new Exception(sprintf('OAuth library not found at: %s. Please install it or change the path in mendeleyapi/Configuration.php.', $pathToOauth));
 		}
 	}
 

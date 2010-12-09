@@ -245,9 +245,11 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 	 *
 	 * Can be sent to Mendeley to post a Document which was created in Biblio
 	 *
+	 * @param StdClass
+	 * @param int
 	 * @return MendeleyBiblioDoc
 	 */
-	public function constructWithNode($node) {
+	public function constructWithNode($node, $groupId = null) {
 		$that = new MendeleyBiblioDoc();
 
 		$mendeleyKeys = array_keys(get_object_vars($that));
@@ -283,6 +285,10 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 					$that->institution = reset($contribs);
 				break;
 			}
+		}
+		
+		if($groupId !== null) {
+			$that->group_id = $groupId;
 		}
 
 		return $that;

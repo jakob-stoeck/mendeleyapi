@@ -15,6 +15,17 @@ class MendeleyTest extends UnitTestCase {
 		$this->assertEqual((int)$result->shared_collection_id, $sharedCollectionId);
 	}
 	
+	function testMendeleyWithCustomConstructorWorks() {
+		$consumer = Configuration::getConsumer();
+		$mendeley = new Mendeley($consumer['key'], $consumer['secret']);
+	
+		$sharedCollectionId = 164791;
+		$url = 'sharedcollections/' . $sharedCollectionId;
+		$params = array('page' => 1, 'items' => 1);
+		$result = $mendeley->get($url, $params);
+		$this->assertEqual((int)$result->shared_collection_id, $sharedCollectionId);
+	}
+
 	/**
 	 * Used to get as many distinct publication types as possible. Should only be used manually.
 	 * @depends testGetSharedCollectionDocuments

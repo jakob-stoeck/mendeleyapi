@@ -51,7 +51,7 @@ class Mendeley {
 		require_once 'Configuration.php';
 		require_once Configuration::getPathToOauth();
 
-		if($consumerKey !== null && $consumerSecret !== null) {
+		if(!empty($consumerKey) && !empty($consumerSecret)) {
 			$consumer = array('key' => $consumerKey, 'secret' => $consumerSecret);
 		} else {
 			$consumer = Configuration::getConsumer();
