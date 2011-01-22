@@ -11,7 +11,7 @@ Usage
 -----
 
 1. Download the OAuth library from http://code.google.com/p/oauth/
-2. Copy Configuration.sample.php to Configuration.php and change settings
+2. Copy Configuration.sample.php to Configuration.php and input your Mendeley consumer and secret. If you don't have one, obtain it from the Mendeley developers site.
 
 Use the library like this:
 
@@ -46,7 +46,10 @@ Use the library like this:
 Testing
 -------
 
-Runs with Simpletest. Point your browser to _webroot_/mendeleyapi/tests/all_tests.php
+1. Run _webroot_/mendeleyapi/getAccessToken.php once to get your Mendeley access token. You only have to do that once. It should redirect you to the Mendeley page where you login and saves the token under /mendeleyapi/cache/access_token_SOMESTRING.
+2. Runs with Simpletest. Point your browser to _webroot_/mendeleyapi/tests/all_tests.php or do it in the shell:
+
+    $ php path/to/mendeleyapi/tests/all_tests.php
 
 Versioning
 ----------

@@ -74,7 +74,7 @@ class Mendeley {
 	/**
 	 * @todo what if access token no longer valid?
 	 */
-	private function getAccessToken() {
+	public function getAccessToken() {
 		if(!$this->accessToken) {
 			$access_cache = $this->cache->get('access_token');
 
@@ -457,7 +457,7 @@ class MendeleyCache {
 	 */
 	private function filePutContentsWithDir($dir, $contents){
 		$success = true;
-		$parts = explode('/', $dir);
+		$parts = explode(DIRECTORY_SEPARATOR, $dir);
 		$file = array_pop($parts);
 		$dir = '';
 		foreach($parts as $part) {
