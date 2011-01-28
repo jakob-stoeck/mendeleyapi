@@ -15,7 +15,8 @@ Usage
 
 Use the library like this:
 
-`    <?php
+`
+    <?php
     require_once 'path/to/mendeleyapi/Mendeley.php';
     $mendeley = new Mendeley();
     
@@ -41,7 +42,8 @@ Use the library like this:
     } catch(Exception $e) {
       echo $e->getMessage();
     }
-    ?>`
+    ?>
+`
 
 Biblio to Mendeley Type Converting
 ----------------------------------
@@ -49,7 +51,8 @@ Biblio to Mendeley Type Converting
 Not all Biblio publication types are supported by Mendeley and vice-versa. Please see the following list:
 
 
-`    <?php
+`
+    <?php
     // biblio types in the mendeley api
     BIBLIO_BILL => 'Bill',
     BIBLIO_BOOK => 'Book',
@@ -85,7 +88,8 @@ Not all Biblio publication types are supported by Mendeley and vice-versa. Pleas
     BIBLIO_UNPUBLISHED => 'Generic',
     // mendeley api types not supported by biblio:
     // ??? => 'Encyclopedia Article';
-    // ??? => 'Working Paper'; ?>`
+    // ??? => 'Working Paper'; ?>
+`
 
 Testing
 -------
