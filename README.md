@@ -15,8 +15,7 @@ Usage
 
 Use the library like this:
 
-`
-    <?php
+`    <?php
     require_once 'path/to/mendeleyapi/Mendeley.php';
     $mendeley = new Mendeley();
     
@@ -42,16 +41,15 @@ Use the library like this:
     } catch(Exception $e) {
       echo $e->getMessage();
     }
-    ?>
-`
+    ?>`
 
 Biblio to Mendeley Type Converting
 ----------------------------------
 
 Not all Biblio publication types are supported by Mendeley and vice-versa. Please see the following list:
 
-`
-    <?php
+
+`    <?php
     // biblio types in the mendeley api
     BIBLIO_BILL => 'Bill',
     BIBLIO_BOOK => 'Book',
@@ -87,8 +85,7 @@ Not all Biblio publication types are supported by Mendeley and vice-versa. Pleas
     BIBLIO_UNPUBLISHED => 'Generic',
     // mendeley api types not supported by biblio:
     // ??? => 'Encyclopedia Article';
-    // ??? => 'Working Paper'; ?>
-`
+    // ??? => 'Working Paper'; ?>`
 
 Testing
 -------
@@ -96,4 +93,4 @@ Testing
 1. Run _webroot_/mendeleyapi/getAccessToken.php once to get your Mendeley access token. You only have to do that once. It should redirect you to the Mendeley page where you login and saves the token under /mendeleyapi/cache/access_token_SOMESTRING.
 2. Runs with Simpletest. Point your browser to _webroot_/mendeleyapi/tests/all_tests.php or with the shell:
 
-    $ php path/to/mendeleyapi/tests/all_tests.php
+    `$ php path/to/mendeleyapi/tests/all_tests.php`
