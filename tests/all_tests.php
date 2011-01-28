@@ -6,7 +6,7 @@ require_once('../Configuration.php');
 
 class AllTests extends TestSuite {
 	function AllTests() {
-		$dir = dirname(__FILE__) . '/';
+		$dir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 
 		$this->TestSuite('All tests');
 		$this->addFile($dir . 'MendeleyCacheTest.php');

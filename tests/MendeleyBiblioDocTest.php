@@ -28,16 +28,48 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$node = self::nodeFactory();
 		$doc = MendeleyBiblioDoc::constructWithNode($node);
 
-		$this->assertEqual($node->title, $doc->title);
 		$this->assertEqual($node->biblio_type, MendeleyBiblioDoc::mendeleyToBiblioType($doc->type));
+		$this->assertEqual($node->title, $doc->title);
+		$this->assertEqual($node->biblio_publisher, $doc->publisher);
 		$this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR][0]['name'], $doc->authors[0]);
+		$this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR][1]['name'], $doc->authors[1]);
+		$this->assertEqual($node->biblio_keywords, $doc->keywords);
 		$this->assertEqual($node->biblio_abst_e, $doc->abstract);
+
+		$notInMendeley = 'node parameter which not exist in the mendeley api are not set';
+		$this->assertTrue(!isset($doc->tertiary_title), $notInMendeley);
+		$this->assertTrue(!isset($doc->section), $notInMendeley);
+
+		$notSetText = 'parameters not set in node should not be set in biblio doc: ';
+		$this->assertNull($doc->city, $notSetText . 'city');
+		$this->assertNull($doc->discipline, $notSetText . 'discipline');
+		$this->assertNull($doc->city, $notSetText . 'city');
+		$this->assertNull($doc->country, $notSetText . 'country');
+		$this->assertNull($doc->discipline, $notSetText . 'discipline');
+		$this->assertNull($doc->documentId, $notSetText . 'documentId');
+		$this->assertNull($doc->doi, $notSetText . 'doi');
+		$this->assertNull($doc->edition, $notSetText . 'edition');
+		$this->assertNull($doc->editors, $notSetText . 'editors');
+		$this->assertNull($doc->genre, $notSetText . 'genre');
+		$this->assertNull($doc->groupId, $notSetText . 'groupId');
+		$this->assertNull($doc->identifiers, $notSetText . 'identifiers');
+		$this->assertNull($doc->institution, $notSetText . 'institution');
+		$this->assertNull($doc->isbn, $notSetText . 'isbn');
+		$this->assertNull($doc->issn, $notSetText . 'issn');
+		$this->assertNull($doc->issue, $notSetText . 'issue');
+		$this->assertNull($doc->notes, $notSetText . 'notes');
+		$this->assertNull($doc->pages, $notSetText . 'pages');
+		$this->assertNull($doc->pmid, $notSetText . 'pmid');
+		$this->assertNull($doc->publication_outlet, $notSetText . 'publication_outlet');
+		$this->assertNull($doc->tags, $notSetText . 'tags');
+		$this->assertNull($doc->url, $notSetText . 'url');
+		$this->assertNull($doc->volume, $notSetText . 'volume');
+		$this->assertNull($doc->year, $notSetText . 'year');
 	}
 
 	function testUploadToMendeley() {
 		$node = self::nodeFactory();
 		$biblioDoc = MendeleyBiblioDoc::constructWithNode($node);
-
 		$mendeley = new Mendeley();
 		$response = $mendeley->post('documents', $biblioDoc->toParams());
 		$this->assertTrue(isset($response->document_id) && is_numeric($response->document_id));
@@ -99,7 +131,7 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 	}
 
 	function testUnknownBiblioTypeIsMisc() {
-		$mendeleyType = 'Miscellaneous';
+		$mendeleyType = 'Generic';
 		$biblioType = MendeleyBiblioDoc::BIBLIO_MISCELLANEOUS;
 		$biblio = MendeleyBiblioDoc::mendeleyToBiblioType('unknown type');
 		$this->assertEqual($biblio, $biblioType);

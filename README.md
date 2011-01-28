@@ -15,7 +15,7 @@ Usage
 
 Use the library like this:
 
-    <?php
+`    <?php
     require_once 'path/to/mendeleyapi/Mendeley.php';
     $mendeley = new Mendeley();
 
@@ -41,7 +41,50 @@ Use the library like this:
     } catch(Exception $e) {
       echo $e->getMessage();
     }
-    ?>
+    ?>`
+
+Biblio to Mendeley Type Converting
+----------------------------------
+
+Not all Biblio publication types are supported by Mendeley and vice-versa. Please see the following list:
+
+`   <?php
+    // biblio types in the mendeley api
+    BIBLIO_BILL => 'Bill',
+    BIBLIO_BOOK => 'Book',
+    BIBLIO_BOOK_CHAPTER => 'Book Section',
+    BIBLIO_BROADCAST => 'Television Broadcast',
+    BIBLIO_CASE => 'Case',
+    BIBLIO_CONFERENCE_PROCEEDINGS => 'Conference Proceedings',
+    BIBLIO_FILM => 'Film',
+    BIBLIO_HEARING => 'Hearing',
+    BIBLIO_JOURNAL_ARTICLE => 'Journal Article',
+    BIBLIO_MAGAZINE_ARTICLE => 'Magazine Article',
+    BIBLIO_NEWSPAPER_ARTICLE => 'Newspaper Article',
+    BIBLIO_PATENT => 'Patent',
+    BIBLIO_SOFTWARE => 'Computer Program',
+    BIBLIO_STATUTE => 'Statute',
+    BIBLIO_THESIS => 'Thesis',
+    BIBLIO_WEB_ARTICLE => 'Web Page',
+    // biblio types not yet in the mendeley api:
+    BIBLIO_ARTWORK => 'Generic',
+    BIBLIO_AUDIOVISUAL => 'Generic',
+    BIBLIO_CHART => 'Generic',
+    BIBLIO_CLASSICAL => 'Generic',
+    BIBLIO_CONFERENCE_PAPER => 'Generic',
+    BIBLIO_DATABASE => 'Generic',
+    BIBLIO_GOVERNMENT_REPORT => 'Generic',
+    BIBLIO_LEGAL_RULING => 'Generic',
+    BIBLIO_MANUSCRIPT => 'Generic',
+    BIBLIO_MAP => 'Generic',
+    BIBLIO_MISCELLANEOUS => 'Generic',
+    BIBLIO_MISCELLANEOUS_SECTION => 'Generic',
+    BIBLIO_PERSONAL => 'Generic',
+    BIBLIO_REPORT => 'Generic',
+    BIBLIO_UNPUBLISHED => 'Generic',
+    // mendeley api types not supported by biblio:
+    // ??? => 'Encyclopedia Article';
+    // ??? => 'Working Paper'; ?>`
 
 Testing
 -------
@@ -50,10 +93,3 @@ Testing
 2. Runs with Simpletest. Point your browser to _webroot_/mendeleyapi/tests/all_tests.php or do it in the shell:
 
     $ php path/to/mendeleyapi/tests/all_tests.php
-
-Versioning
-----------
-
-Semantic versioning: http://semver.org/
-
-© 2010 Jakob Stoeck

@@ -14,11 +14,11 @@ class MendeleyTest extends UnitTestCase {
 		$result = $this->mendeley->get($url, $params);
 		$this->assertEqual((int)$result->shared_collection_id, $sharedCollectionId);
 	}
-	
+
 	function testMendeleyWithCustomConstructorWorks() {
 		$consumer = Configuration::getConsumer();
 		$mendeley = new Mendeley($consumer['key'], $consumer['secret']);
-	
+
 		$sharedCollectionId = 164791;
 		$url = 'sharedcollections/' . $sharedCollectionId;
 		$params = array('page' => 1, 'items' => 1);
@@ -35,26 +35,26 @@ class MendeleyTest extends UnitTestCase {
 		foreach($result->document_ids as $id) {
 			$docs[] = $this->mendeley->get('documents/' . $id);
 		}
-		
+
 		$types = array();
 		foreach($docs as $d) {
 			$types[$d->type] = null;
 		}
-		
+
 		echo var_dump($types);
 	}
 
-	function testCreateDocument() {
+	function testCreateGenericDocument() {
 		$title = 'Example Title';
-		$url = 'http://www.example.org/';
 		$tags = array('a', 'b');
 		$groupId = 504091;
+		$type = 'Generic';
 
 		$doc = new MendeleyDoc();
 		$doc->title = $title;
-		$doc->url = $url;
 		$doc->tags = $tags;
 		$doc->group_id = $groupId;
+		$doc->type = $type;
 
 		$result = $this->mendeley->post('documents/', $doc->toParams());
 
@@ -68,19 +68,19 @@ class MendeleyTest extends UnitTestCase {
 	// function testGetDetailsUnauthorized() {
 	// 	$url = 'documents/details/' . $this->tmp['documentId'];
 	//
-	// 	$result = $this->mendeley->get($url, array(), false);
+	// 	$result = $this->mendeley->get($url);
 	// 	$this->assertEqual($result->title, 'Example Title');
 	// }
 
 	function testGetDocDetails() {
 		$title = 'Example Title';
-		$url = 'http://www.example.org/';
 		$tags = array('a', 'b');
+		$type = 'Generic';
 
 		$result = $this->mendeley->get('documents/' . $this->tmp['documentId']);
 		$this->assertEqual($result->title, $title);
-		$this->assertEqual($result->url, $url);
 		$this->assertEqual($result->tags, $tags);
+		$this->assertEqual($result->type, $type);
 	}
 
 	function testGetSearchUnauthorized() {
@@ -97,7 +97,7 @@ class MendeleyTest extends UnitTestCase {
 				'name' => 'Example Collection'
 			)
 		);
-		
+
 		try {
 			$result = $this->mendeley->post('sharedcollections', $sharedCollection);
 			$this->assertTrue(isset($result->shared_collection_id));

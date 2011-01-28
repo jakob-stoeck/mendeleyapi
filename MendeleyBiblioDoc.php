@@ -251,17 +251,15 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 	 */
 	public function constructWithNode($node, $groupId = null) {
 		$that = new MendeleyBiblioDoc();
-
 		$mendeleyKeys = array_keys(get_object_vars($that));
 		$map = self::map(true);
 
 		foreach($mendeleyKeys as $m) {
 			if(isset($map[$m])) {
 				$biblioKey = $map[$m];
-			}
-
-			if(isset($node->$biblioKey)) {
-				$that->$m = $node->$biblioKey;
+				if(isset($node->$biblioKey)) {
+					$that->$m = $node->$biblioKey;
+				}
 			}
 		}
 
@@ -286,7 +284,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 				break;
 			}
 		}
-		
+
 		if($groupId !== null) {
 			$that->group_id = $groupId;
 		}
@@ -304,7 +302,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 	/**
 	 * Maps biblio publication types to mendeley publication types.
 	 *
-	 * The only ones I've seen in the wild of Mendeley are those "confirmed". The other ones are pure guesswork but should work in most cases, since the wording is very often the same.
+	 * Not all types of biblio are supported by the mendeley api
 	 *
 	 * @param mixed
 	 * 	biblio type id if flip is false, else Mendeley type string
@@ -313,37 +311,42 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 	 */
 	public static function biblioToMendeleyType($type, $flip = false) {
 		$biblioToMendeley = array(
-			self::BIBLIO_BOOK => 'Book', // confirmed
-			self::BIBLIO_BOOK_CHAPTER => 'Book Section', // confirmed
-			self::BIBLIO_JOURNAL_ARTICLE => 'Journal Article', // confirmed
-			self::BIBLIO_CONFERENCE_PAPER => 'Conference Paper',
-			self::BIBLIO_CONFERENCE_PROCEEDINGS => 'Conference Proceedings', // confirmed
-			self::BIBLIO_NEWSPAPER_ARTICLE => 'Newspaper Article',
-			self::BIBLIO_MAGAZINE_ARTICLE => 'Magazine Article', // confirmed
-			self::BIBLIO_WEB_ARTICLE => 'Web Page', // confirmed
-			self::BIBLIO_THESIS => 'Thesis',
-			self::BIBLIO_REPORT => 'Report',
-			self::BIBLIO_FILM => 'Film',
-			self::BIBLIO_BROADCAST => 'Broadcast',
-			self::BIBLIO_ARTWORK => 'Artwork',
-			self::BIBLIO_SOFTWARE => 'Software',
-			self::BIBLIO_AUDIOVISUAL => 'Audiovisual',
-			self::BIBLIO_HEARING => 'Hearing',
-			self::BIBLIO_CASE => 'Case',
+			// biblio types in the mendeley api
 			self::BIBLIO_BILL => 'Bill',
-			self::BIBLIO_STATUTE => 'Statute',
+			self::BIBLIO_BOOK => 'Book',
+			self::BIBLIO_BOOK_CHAPTER => 'Book Section',
+			self::BIBLIO_BROADCAST => 'Television Broadcast',
+			self::BIBLIO_CASE => 'Case',
+			self::BIBLIO_CONFERENCE_PROCEEDINGS => 'Conference Proceedings',
+			self::BIBLIO_FILM => 'Film',
+			self::BIBLIO_HEARING => 'Hearing',
+			self::BIBLIO_JOURNAL_ARTICLE => 'Journal Article',
+			self::BIBLIO_MAGAZINE_ARTICLE => 'Magazine Article',
+			self::BIBLIO_NEWSPAPER_ARTICLE => 'Newspaper Article',
 			self::BIBLIO_PATENT => 'Patent',
-			self::BIBLIO_PERSONAL => 'Personal',
-			self::BIBLIO_MANUSCRIPT => 'Manuscript',
-			self::BIBLIO_MAP => 'Map',
-			self::BIBLIO_CHART => 'Chart',
-			self::BIBLIO_UNPUBLISHED => 'Unpublished',
-			self::BIBLIO_DATABASE => 'Database',
-			self::BIBLIO_GOVERNMENT_REPORT => 'Government Report',
-			self::BIBLIO_CLASSICAL => 'Classical',
-			self::BIBLIO_LEGAL_RULING => 'Legal Ruling',
-			self::BIBLIO_MISCELLANEOUS => 'Miscellaneous',
-			self::BIBLIO_MISCELLANEOUS_SECTION => 'Miscellaneous Section',
+			self::BIBLIO_SOFTWARE => 'Computer Program',
+			self::BIBLIO_STATUTE => 'Statute',
+			self::BIBLIO_THESIS => 'Thesis',
+			self::BIBLIO_WEB_ARTICLE => 'Web Page',
+			// biblio types not yet in the mendeley api:
+			self::BIBLIO_ARTWORK => 'Generic',
+			self::BIBLIO_AUDIOVISUAL => 'Generic',
+			self::BIBLIO_CHART => 'Generic',
+			self::BIBLIO_CLASSICAL => 'Generic',
+			self::BIBLIO_CONFERENCE_PAPER => 'Generic',
+			self::BIBLIO_DATABASE => 'Generic',
+			self::BIBLIO_GOVERNMENT_REPORT => 'Generic',
+			self::BIBLIO_LEGAL_RULING => 'Generic',
+			self::BIBLIO_MANUSCRIPT => 'Generic',
+			self::BIBLIO_MAP => 'Generic',
+			self::BIBLIO_MISCELLANEOUS => 'Generic',
+			self::BIBLIO_MISCELLANEOUS_SECTION => 'Generic',
+			self::BIBLIO_PERSONAL => 'Generic',
+			self::BIBLIO_REPORT => 'Generic',
+			self::BIBLIO_UNPUBLISHED => 'Generic',
+			// mendeley api types not supported by biblio:
+			// self::??? => 'Encyclopedia Article';
+			// self::??? => 'Working Paper';
 		);
 
 		if($flip) {
@@ -353,7 +356,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 		if(isset($biblioToMendeley[$type])) {
 			return $biblioToMendeley[$type];
 		} else {
-			return ($flip ? self::BIBLIO_MISCELLANEOUS : 'Miscellaneous');
+			return ($flip ? self::BIBLIO_MISCELLANEOUS : $biblioToMendeley[self::BIBLIO_MISCELLANEOUS]);
 		}
 	}
 }
