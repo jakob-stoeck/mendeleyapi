@@ -15,40 +15,43 @@ Usage
 
 Use the library like this:
 
-`    <?php
+`
+    <?php
     require_once 'path/to/mendeleyapi/Mendeley.php';
     $mendeley = new Mendeley();
-
+    
     // GET request to look up things
     $result = $mendeley->get('sharedcollections/12345'); // $result is now a PHP object with all documents of the shared collection with this id
     $result = $mendeley->getCollection('sharedcollections/12345'); // similar to above, only that $result->documents now contains also all document info
-
+    
     // POST request to change things, in this case to add a document to a group (collection)
     $doc = new MendeleyDoc();
     $doc->title = 'Example Title';
     $doc->url = 'http://www.example.org/';
     $doc->group_id = 504091;
-
+    
     try {
       $result = $mendeley->post('documents/', $doc->toParams());
     } catch(Exception $e) {
       echo $e->getMessage();
     }
-
+    
     // DELETE
     try {
       $mendeley->delete('documents/12345');
     } catch(Exception $e) {
       echo $e->getMessage();
     }
-    ?>`
+    ?>
+`
 
 Biblio to Mendeley Type Converting
 ----------------------------------
 
 Not all Biblio publication types are supported by Mendeley and vice-versa. Please see the following list:
 
-`   <?php
+`
+    <?php
     // biblio types in the mendeley api
     BIBLIO_BILL => 'Bill',
     BIBLIO_BOOK => 'Book',
@@ -84,12 +87,13 @@ Not all Biblio publication types are supported by Mendeley and vice-versa. Pleas
     BIBLIO_UNPUBLISHED => 'Generic',
     // mendeley api types not supported by biblio:
     // ??? => 'Encyclopedia Article';
-    // ??? => 'Working Paper'; ?>`
+    // ??? => 'Working Paper'; ?>
+`
 
 Testing
 -------
 
 1. Run _webroot_/mendeleyapi/getAccessToken.php once to get your Mendeley access token. You only have to do that once. It should redirect you to the Mendeley page where you login and saves the token under /mendeleyapi/cache/access_token_SOMESTRING.
-2. Runs with Simpletest. Point your browser to _webroot_/mendeleyapi/tests/all_tests.php or do it in the shell:
+2. Runs with Simpletest. Point your browser to _webroot_/mendeleyapi/tests/all_tests.php or with the shell:
 
     $ php path/to/mendeleyapi/tests/all_tests.php
