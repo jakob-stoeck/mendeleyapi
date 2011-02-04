@@ -15,6 +15,13 @@ class MendeleyTest extends UnitTestCase {
 		$this->assertEqual((int)$result->shared_collection_id, $sharedCollectionId);
 	}
 
+	function testMendeleyConstructorUsesRightConsumer() {
+		$mendeley = new Mendeley('abc', '123');
+		$consumer = $mendeley->getConsumer();
+		$this->assertEqual('abc', $consumer->key);
+		$this->assertEqual('123', $consumer->secret);
+	}
+
 	function testMendeleyWithCustomConstructorWorks() {
 		$consumer = Configuration::getConsumer();
 		$mendeley = new Mendeley($consumer['key'], $consumer['secret']);

@@ -82,7 +82,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 	const BIBLIO_MISCELLANEOUS_SECTION = 130;
 
 	/**
-	 * MendeleyDoc properties I haven't mapped so far
+	 * MendeleyDoc properties I haven't mapped so far because I didn't find a good Biblio field for it
 	 * Ideally all should be mapped in the future
 	 */
 	public static function notMapped() {

@@ -62,6 +62,10 @@ class Mendeley {
 		$this->cache = new MendeleyCache('_' . md5($this->consumer->key));
 	}
 
+	public function getConsumer() {
+		return $this->consumer;
+	}
+
 	/**
 	 * Returns true if we are on the OAuth callback page, i.e. the user granted permissions
 	 *
