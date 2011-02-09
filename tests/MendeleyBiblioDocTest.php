@@ -19,7 +19,7 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$this->assertEqual($node->title, $doc->title);
 		$this->assertEqual($node->biblio_url, $doc->url);
 		$this->assertEqual($node->biblio_type, 106);
-		$this->assertEqual($node->tags, $tags);
+		// $this->assertEqual($node->tags, $tags);
 		$this->assertEqual($node->biblio_contributors[1][0]['name'], $doc->authors[0]);
 		$this->assertTrue(is_numeric($node->biblio_type) && $node->biblio_type > 0);
 	}
@@ -35,6 +35,7 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR][1]['name'], $doc->authors[1]);
 		$this->assertEqual($node->biblio_keywords, $doc->keywords);
 		$this->assertEqual($node->biblio_abst_e, $doc->abstract);
+		$this->assertEqual($node->taxonomy['taxonomy_term_1']['title'], $doc->tags[0]);
 
 		$notInMendeley = 'node parameter which not exist in the mendeley api are not set';
 		$this->assertTrue(!isset($doc->tertiary_title), $notInMendeley);
@@ -61,7 +62,6 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$this->assertNull($doc->pages, $notSetText . 'pages');
 		$this->assertNull($doc->pmid, $notSetText . 'pmid');
 		$this->assertNull($doc->publication_outlet, $notSetText . 'publication_outlet');
-		$this->assertNull($doc->tags, $notSetText . 'tags');
 		$this->assertNull($doc->url, $notSetText . 'url');
 		$this->assertNull($doc->volume, $notSetText . 'volume');
 		$this->assertNull($doc->year, $notSetText . 'year');
@@ -77,6 +77,8 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$doc = $mendeley->get('documents/' . $response->document_id);
 		$this->assertEqual($node->title, $doc->title);
 		$this->assertEqual($node->biblio_type, MendeleyBiblioDoc::mendeleyToBiblioType($doc->type));
+		$this->assertEqual($node->taxonomy['taxonomy_term_1']['title'], $doc->tags[0]);
+		$this->assertEqual($node->taxonomy['taxonomy_term_2']['title'], $doc->tags[1]);
 		// $this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR][0]['name'], reset($doc->authors)); // mendeley puts a space before the author name after upload. Strange.
 		$this->assertEqual($node->biblio_abst_e, $doc->abstract);
 	}
@@ -126,7 +128,10 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$node->biblio_keywords = array('a', 'b', 'c');
 		$node->biblio_abst_e = 'Hier steh ich nun ich armer Tor';
 		$node->biblio_mendeley_doc_id = null;
-
+		$node->taxonomy = array(
+			'taxonomy_term_1' => array('title' => 'a'),
+			'taxonomy_term_2' => array('title' => 'b'),
+		);
 		return $node;
 	}
 

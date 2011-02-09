@@ -165,7 +165,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 			'biblio_volume' => 'volume',
 			'biblio_year' => 'year',
 			'title' => 'title',
-			'tags' => 'tags', // proprietary addition to add taxonomy terms to a node
+			'taxonomy' => 'tags', // proprietary addition to add taxonomy terms to a node
 		));
 
 		if($flip) {
@@ -260,6 +260,19 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 				if(isset($node->$biblioKey)) {
 					$that->$m = $node->$biblioKey;
 				}
+			}
+		}
+		if(isset($that->tags)) {
+			if(isset($that->tags['tags'])) {
+				$that->tags = explode(',', reset($that->tags['tags']));
+				foreach($that->tags as &$t) {
+					$t = trim($t);
+				}
+			} elseif(is_array($that->tags)) {
+				foreach($that->tags as &$term) {
+					$term = $term['title'];
+				}
+				$that->tags = array_values($that->tags);
 			}
 		}
 
