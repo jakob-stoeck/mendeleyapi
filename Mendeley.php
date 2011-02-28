@@ -286,6 +286,7 @@ class MendeleyUtil {
 			break;
 		}
 
+
 		curl_setopt($ch, CURLOPT_URL, $url);
 		$response = curl_exec($ch);
 		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -296,7 +297,12 @@ class MendeleyUtil {
 				var_dump(compact('http_code'));
 			}
 			$response = json_decode($response);
-			throw new Exception(sprintf('Error %d (%s): %s', $http_code, $text, $response->error));
+			if(isset($response->error)) {
+				$error = $response->error;
+			} else {
+				$error = 'unknown error';
+			}
+			throw new Exception(sprintf('Error %d (%s): %s', $http_code, $text, $error));
 			$response = false;
 		}
 

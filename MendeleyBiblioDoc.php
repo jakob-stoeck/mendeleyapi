@@ -254,26 +254,37 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 		$mendeleyKeys = array_keys(get_object_vars($that));
 		$map = self::map(true);
 
+		// map node attributes to mendeley attributes
 		foreach($mendeleyKeys as $m) {
 			if(isset($map[$m])) {
 				$biblioKey = $map[$m];
-				if(isset($node->$biblioKey)) {
+				if(isset($node->$biblioKey) && !empty($node->$biblioKey)) {
 					$that->$m = $node->$biblioKey;
 				}
 			}
 		}
-		if(isset($that->tags)) {
+		// there three ways in drupal to represent tags in a node ...
+		if(isset($that->tags) && !empty($that->tags)) {
 			if(isset($that->tags['tags'])) {
+				// comma-separated list (i.e. user input)
 				$that->tags = explode(',', reset($that->tags['tags']));
 				foreach($that->tags as &$t) {
 					$t = trim($t);
 				}
 			} elseif(is_array($that->tags)) {
-				foreach($that->tags as &$term) {
-					$term = $term['title'];
+				if(is_array(reset($that->tags))) {
+					// array of arrays (no user input but a drupal db query result)
+					foreach($that->tags as &$term) {
+						$term = $term['title'];
+					}
+				} elseif(is_object(reset($that->tags))) {
+					// array of objects (drupal node load result)
+					foreach($that->tags as &$term) {
+						$term = $term->name;
+					}
 				}
-				$that->tags = array_values($that->tags);
 			}
+			$that->tags = array_values($that->tags);
 		}
 
 		$that->type = self::biblioToMendeleyType($node->$map['type']);

@@ -19,7 +19,7 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$this->assertEqual($node->title, $doc->title);
 		$this->assertEqual($node->biblio_url, $doc->url);
 		$this->assertEqual($node->biblio_type, 106);
-		// $this->assertEqual($node->tags, $tags);
+		$this->assertEqual($node->taxonomy, $tags);
 		$this->assertEqual($node->biblio_contributors[1][0]['name'], $doc->authors[0]);
 		$this->assertTrue(is_numeric($node->biblio_type) && $node->biblio_type > 0);
 	}
@@ -36,8 +36,7 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$this->assertEqual($node->biblio_keywords, $doc->keywords);
 		$this->assertEqual($node->biblio_abst_e, $doc->abstract);
 		$this->assertEqual($node->taxonomy['taxonomy_term_1']['title'], $doc->tags[0]);
-
-		$notInMendeley = 'node parameter which not exist in the mendeley api are not set';
+		$notInMendeley = 'node parameter which do not exist in the mendeley api are not set';
 		$this->assertTrue(!isset($doc->tertiary_title), $notInMendeley);
 		$this->assertTrue(!isset($doc->section), $notInMendeley);
 
@@ -79,7 +78,7 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$this->assertEqual($node->biblio_type, MendeleyBiblioDoc::mendeleyToBiblioType($doc->type));
 		$this->assertEqual($node->taxonomy['taxonomy_term_1']['title'], $doc->tags[0]);
 		$this->assertEqual($node->taxonomy['taxonomy_term_2']['title'], $doc->tags[1]);
-		// $this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR][0]['name'], reset($doc->authors)); // mendeley puts a space before the author name after upload. Strange.
+		$this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR][0]['name'], reset($doc->authors)); // mendeley puts a space before the author name after upload. Strange.
 		$this->assertEqual($node->biblio_abst_e, $doc->abstract);
 	}
 
