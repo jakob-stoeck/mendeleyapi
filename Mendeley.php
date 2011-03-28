@@ -21,11 +21,11 @@
  */
 
 class Mendeley {
-	const MENDELEY_REQUEST_TOKEN_ENDPOINT = 'http://www.mendeley.com/oauth/request_token/';
-	const MENDELEY_ACCESS_TOKEN_ENDPOINT = 'http://www.mendeley.com/oauth/access_token/';
-	const MENDELEY_AUTHORIZE_ENDPOINT = 'http://www.mendeley.com/oauth/authorize/';
-	const MENDELEY_OAPI_PRIVATE_URL = 'http://www.mendeley.com/oapi/library/';
-	const MENDELEY_OAPI_PUBLIC_URL = 'http://www.mendeley.com/oapi/';
+	const MENDELEY_REQUEST_TOKEN_ENDPOINT = 'http://api.mendeley.com/oauth/request_token/';
+	const MENDELEY_ACCESS_TOKEN_ENDPOINT = 'http://api.mendeley.com/oauth/access_token/';
+	const MENDELEY_AUTHORIZE_ENDPOINT = 'http://api.mendeley.com/oauth/authorize/';
+	const MENDELEY_OAPI_PRIVATE_URL = 'http://api.mendeley.com/oapi/library/';
+	const MENDELEY_OAPI_PUBLIC_URL = 'http://api.mendeley.com/oapi/';
 
 	/**
 	 * @var OAuthConsumer $consumer
