@@ -183,12 +183,11 @@ class Mendeley {
 	/**
 	 * Enrich a group with its document details instead of only document ids
 	 *
-	 * @param string $collectionUrl
-	 * 	works with sharedcollection/id and collection/id
+	 * @param string $groupId
 	 * @param array $params
 	 */
-	public function getCollection($collectionUrl, $params = array()) {
-		$collection = $this->get($collectionUrl, $params);
+	public function getCollection($groupId, $params = array()) {
+		$collection = $this->get('groups/' . $groupId, $params);
 		$collection->documents = $this->loadDocumentDetails($collection->document_ids);
 		return $collection;
 	}
@@ -209,26 +208,12 @@ class Mendeley {
 	}
 
 	/**
-	 * Get collection details by knowing only the group id, not the collection type
-	 *
-	 * The Mendeley API differentiates groups between shared collections and collections but there is no API way to get the type of a collection by their group id. So we use this method to get a group transparently.
+	 * Get group details by group id
 	 *
 	 * @return StdClass
-	 * 	Output of get('(shared)collections/$groupId') and an added 'group_type'
 	 */
 	public function getGroupDocuments($groupId, $params = array()) {
-		$groupTypes = array(
-			'sharedcollections',
-			'collections'
-		);
-
-		foreach($groupTypes as $g) {
-			$collection = $this->get($g . '/' . $groupId, $params);
-			if(isset($collection->total_results)) {
-				$collection->group_type = $g;
-				return $collection;
-			}
-		}
+		return $this->get('groups/' . $groupId, $params);
 	}
 
 	/**
@@ -286,7 +271,6 @@ class MendeleyUtil {
 			break;
 		}
 
-
 		curl_setopt($ch, CURLOPT_URL, $url);
 		$response = curl_exec($ch);
 		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -294,7 +278,7 @@ class MendeleyUtil {
 
 		if($text = MendeleyUtil::isError($http_code)) {
 			if(Configuration::DEBUG > 0) {
-				var_dump(compact('http_code'));
+				var_dump(compact('http_code', 'url', 'method'));
 			}
 			$response = json_decode($response);
 			if(isset($response->error)) {

@@ -7,12 +7,12 @@ class MendeleyTest extends UnitTestCase {
 		$this->mendeley = new Mendeley();
 	}
 
-	function testGetSharedCollectionDocuments() {
-		$sharedCollectionId = 164791;
-		$url = 'sharedcollections/' . $sharedCollectionId;
+	function testGet() {
+		$groupId = 164791;
+		$url = 'groups/' . $groupId;
 		$params = array('page' => 1, 'items' => 1);
 		$result = $this->mendeley->get($url, $params);
-		$this->assertEqual((int)$result->shared_collection_id, $sharedCollectionId);
+		$this->assertEqual((int)$result->group_id, $groupId);
 	}
 
 	function testMendeleyConstructorUsesRightConsumer() {
@@ -26,16 +26,16 @@ class MendeleyTest extends UnitTestCase {
 		$consumer = Configuration::getConsumer();
 		$mendeley = new Mendeley($consumer['key'], $consumer['secret']);
 
-		$sharedCollectionId = 164791;
-		$url = 'sharedcollections/' . $sharedCollectionId;
+		$groupId = 164791;
+		$url = 'groups/' . $groupId;
 		$params = array('page' => 1, 'items' => 1);
 		$result = $mendeley->get($url, $params);
-		$this->assertEqual((int)$result->shared_collection_id, $sharedCollectionId);
+		$this->assertEqual((int)$result->group_id, $groupId);
 	}
 
 	/**
 	 * Used to get as many distinct publication types as possible. Should only be used manually.
-	 * @depends testGetSharedCollectionDocuments
+	 * @depends testGetGroupDocuments
 	 */
 	function getTypes() {
 		$docs = array();
@@ -74,7 +74,7 @@ class MendeleyTest extends UnitTestCase {
 	// Unauthorized calls to document details don't work, because i don't get the document id as described here http://dev.mendeley.com/docs/user-specific-resources/user-library-document-details
 	// function testGetDetailsUnauthorized() {
 	// 	$url = 'documents/details/' . $this->tmp['documentId'];
-	//
+	// 
 	// 	$result = $this->mendeley->get($url);
 	// 	$this->assertEqual($result->title, 'Example Title');
 	// }
@@ -98,39 +98,36 @@ class MendeleyTest extends UnitTestCase {
 	}
 
 	function testCreateCollection() {
-		$sharedCollection = array(
-			'sharedcollection' =>
+		$group = array(
+			'group' =>
 			array(
-				'name' => 'Example Collection'
-			)
+				'name' => 'Example Group',
+				'type' => 'private',
+			),
 		);
 
-		try {
-			$result = $this->mendeley->post('sharedcollections', $sharedCollection);
-			$this->assertTrue(isset($result->shared_collection_id));
-			$this->tmp['shared_collection_id'] = $result->shared_collection_id;
-		} catch(Exception $e) {
-			var_dump($e->getMessage());
-		}
+		$result = $this->mendeley->post('groups', $group);
+		$this->assertTrue(is_numeric($result->group_id) && $result->group_id > 0);
+		$this->tmp['group_id'] = $result->group_id;
 	}
-
+	
 	function testDeleteCollection() {
-		$response = $this->mendeley->delete('sharedcollections/' . $this->tmp['shared_collection_id']);
+		$response = $this->mendeley->delete('groups/' . $this->tmp['group_id']);
 		$this->assertTrue(empty($response));
 	}
-
+	
 	function testDeleteDocument() {
 		$this->assertTrue(isset($this->tmp['documentId']) && is_numeric($this->tmp['documentId']));
 		$response = $this->mendeley->delete('documents/' . $this->tmp['documentId']);
 		$this->assertTrue(empty($response));
 	}
-
+	
 	function testGetGroupDocuments() {
 		$response = $this->mendeley->getGroupDocuments(164791);
 		$this->assertTrue(isset($response->total_results));
-		$this->assertEqual($response->group_type, 'sharedcollections');
+		$this->assertEqual($response->group_id, 164791);
 	}
-
+	
 	function testGetManyDocuments() {
 		$many = 10000;
 		$response = $this->mendeley->getGroupDocuments(164791, array('items' => $many));

@@ -25,10 +25,10 @@ Use the library stand-alone like this:
     $mendeley = new Mendeley();
     
     // GET request to look up things
-    $result = $mendeley->get('sharedcollections/12345'); // returns a PHP object with all documents of the shared collection with this id
-    $result = $mendeley->getCollection('sharedcollections/12345'); // similar to above, only that enriches the result with the document info for each document
+    $result = $mendeley->get('groups/12345'); // returns a PHP object with all documents of the group
+    $result = $mendeley->getCollection('groups/12345'); // similar to above, only that enriches the result with the document info for each document
     
-    // POST request to change things, in this case to add a document to a group (collection)
+    // POST request to change things, in this case to add a document to a group
     $doc = new MendeleyDoc();
     $doc->type = 'Generic';
     $doc->title = 'Example Title';
