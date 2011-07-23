@@ -2,7 +2,7 @@
 /**
  *   Mendeley API Client
  *
- *   Copyright (C) 2010  Jakob Stoeck
+ *   Copyright (C) 2010, 2011  Jakob Stoeck
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by

@@ -2,7 +2,7 @@
 /**
  *   Mendeley API Client
  *
- *   Copyright (C) 2010  Jakob Stoeck
+ *   Copyright (C) 2010, 2011  Jakob Stoeck
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,8 +24,14 @@ class Configuration {
 	const DEBUG = 0;
 	const CONSUMER_TYPE = 'default';
 
+	/**
+	 * @return string
+	 */
 	public static function getPathToOauth() {
-		$pathToOauth = $_SERVER['DOCUMENT_ROOT'] . '/sites/all/libraries/oauth/OAuth.php'; // change the path to your OAuth library installation from http://code.google.com/p/oauth/
+		// for convenience a copy of http://code.google.com/p/oauth/ is included
+		// you may change the path to your custom OAuth library installation
+		$dir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+		$pathToOauth = $dir . 'oauth' . DIRECTORY_SEPARATOR . 'OAuth.php'; 
 
 		if(file_exists($pathToOauth)) {
 			return $pathToOauth;
@@ -34,6 +40,9 @@ class Configuration {
 		}
 	}
 
+	/**
+	 * @return array
+	 */
 	public static function getConsumer() {
 		$consumer['default'] = array(
 			'key' => 'CHANGE_ME',

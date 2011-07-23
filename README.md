@@ -7,6 +7,8 @@ It accepts URLs from "user specific resources", handles the Authentication via O
 
 ## Testing
 
+You need to have [SimpleTest][2] installed to run the tests.
+
 1. Run _webroot_/mendeleyapi/getAccessToken.php once to get your Mendeley access token. You only have to do that once. It should redirect you to the Mendeley page where you login and saves the token under /mendeleyapi/cache/access_token_SOMESTRING.
 2. Runs with Simpletest. Point your browser to _webroot_/mendeleyapi/tests/all_tests.php or with the shell:
 
@@ -14,12 +16,10 @@ It accepts URLs from "user specific resources", handles the Authentication via O
 
 ## Usage
 
-1. Download the OAuth library from http://code.google.com/p/oauth/
-2. Copy Configuration.sample.php to Configuration.php and input your Mendeley consumer and secret. If you don't have one, obtain it from the Mendeley developers site.
+Copy Configuration.sample.php to Configuration.php and input your Mendeley consumer and secret. If you don't have one, obtain it from the Mendeley developers site.
 
 Use the library stand-alone like this:
 
-`
     <?php
     require_once 'path/to/mendeleyapi/Mendeley.php';
     $mendeley = new Mendeley();
@@ -34,10 +34,15 @@ Use the library stand-alone like this:
     $doc->title = 'Example Title';
     $doc->authors = array('Jakob Stoeck');
     $doc->group_id = 504091;
-    
     $mendeley->post('documents/', $doc->toParams());
     
     // DELETE
     $mendeley->delete('documents/12345');
     ?>
-`
+
+## Libraries used
+
+For convenience a copy of the [OAuth Library][1] is pre-installed
+
+[1]: http://code.google.com/p/oauth/
+[2]: http://www.simpletest.org/
