@@ -78,8 +78,8 @@ class MendeleyBiblioDocTest extends UnitTestCase {
 		$this->assertEqual($node->biblio_type, MendeleyBiblioDoc::mendeleyToBiblioType($doc->type));
 		$this->assertEqual($node->taxonomy['taxonomy_term_1']['title'], $doc->tags[0]);
 		$this->assertEqual($node->taxonomy['taxonomy_term_2']['title'], $doc->tags[1]);
-		$this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR][0]['name'], $doc->authors[0]->surname);
-		$this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR][1]['name'], $doc->authors[1]->surname);
+		$this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR][0]['name'], trim(implode(' ', array($doc->authors[0]->forename, $doc->authors[0]->surname))));
+		$this->assertEqual($node->biblio_contributors[MendeleyBiblioDoc::BIBLIO_AUTHOR][1]['name'], trim(implode(' ', array($doc->authors[1]->forename, $doc->authors[1]->surname))));
 		$this->assertEqual($node->biblio_abst_e, $doc->abstract);
 	}
 

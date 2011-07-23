@@ -345,6 +345,7 @@ class MendeleyUtil {
 class MendeleyDoc {
 	public $abstract;
 	public $authors;
+	public $bogus; // doesn't exist, when used Mendeley API will respond with the fields you may use
 	public $city;
 	public $country;
 	public $discipline;
@@ -371,6 +372,34 @@ class MendeleyDoc {
 	public $url;
 	public $volume;
 	public $year;
+
+	/**
+	 * Returns all possible Mendeley document types
+	 */
+	public static function getTypes() {
+		return array(
+			'Bill',
+			'Book',
+			'Book Section',
+			'Case',
+			'Computer Program',
+			'Conference Proceedings',
+			'Encyclopedia Article',
+			'Film',
+			'Generic',
+			'Hearing',
+			'Journal Article',
+			'Magazine Article',
+			'Newspaper Article',
+			'Patent',
+			'Report',
+			'Statute',
+			'Television Broadcast',
+			'Thesis',
+			'Web Page',
+			'Working Paper',
+		);
+	}
 
 	/**
 	 * Instantiate a Mendeley Document by its internal document id

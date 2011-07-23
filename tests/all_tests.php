@@ -14,5 +14,6 @@ class AllTests extends TestSuite {
 		$this->addFile($dir . 'MendeleyBiblioDocTest.php');
 		$this->addFile($dir . 'MendeleyUtilTest.php');
 		$this->addFile($dir . 'MendeleyTest.php');
+		// $this->addFile($dir . 'MendeleyInfo.php'); // activate to output Mendeley infos
 	}
 }

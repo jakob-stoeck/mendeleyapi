@@ -59,6 +59,7 @@ class MendeleyTest extends UnitTestCase {
 
 		$doc = new MendeleyDoc();
 		$doc->title = $title;
+		$doc->bogus = 1;
 		$doc->tags = $tags;
 		$doc->group_id = $groupId;
 		$doc->type = $type;

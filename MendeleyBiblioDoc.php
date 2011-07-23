@@ -87,7 +87,6 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 	 */
 	public static function notMapped() {
 		return array(
-			'city',
 			'country',
 			'discipline',
 			'genre',
@@ -111,7 +110,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 			'biblio_abst_e' => 'abstract',
 			'biblio_abst_f' => null,
 			'biblio_accession_number' => null,
-			'biblio_access_date' => null,
+			'biblio_access_date' => 'dateAccessed',
 			'biblio_alternate_title' => null,
 			'biblio_auth_address' => null,
 			'biblio_call_number' => null,
@@ -134,16 +133,16 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 			'biblio_issue' => 'issue',
 			'biblio_keywords' => 'keywords',
 			'biblio_label' => null,
-			'biblio_lang' => null,
+			'biblio_lang' => 'language',
 			'biblio_mendeley_doc_id' => 'documentId',
 			'biblio_notes' => 'notes',
 			'biblio_number' => null,
 			'biblio_number_of_volumes' => null,
-			'biblio_original_publication' => null,
+			'biblio_original_publication' => 'originalPublication',
 			'biblio_other_author_affiliations' => null,
 			'biblio_other_number' => null,
 			'biblio_pages' => 'pages',
-			'biblio_place_published' => 'publication_outlet',
+			'biblio_place_published' => 'city',
 			'biblio_publisher' => 'publisher',
 			'biblio_pubmed_id' => 'pmid',
 			'biblio_refereed' => null,
@@ -237,6 +236,14 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 			}
 			$that->documentId = $documentId;
 		}
+
+		// authors are stored as objects in Mendeley and as strings in Biblio
+		if (isset($that->authors)) {
+			foreach ($that->authors as &$a) {
+				$a = implode(' ', array($a->forename, $a->surname));
+			}
+		}
+
 		return $that;
 	}
 
