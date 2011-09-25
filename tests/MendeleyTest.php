@@ -59,7 +59,6 @@ class MendeleyTest extends UnitTestCase {
 
 		$doc = new MendeleyDoc();
 		$doc->title = $title;
-		$doc->bogus = 1;
 		$doc->tags = $tags;
 		$doc->group_id = $groupId;
 		$doc->type = $type;
@@ -98,7 +97,7 @@ class MendeleyTest extends UnitTestCase {
 		$this->assertEqual($result->items_per_page, $itemsPerPage);
 	}
 
-	function testCreateCollection() {
+	function testCreateGroup() {
 		$group = array(
 			'group' =>
 			array(
@@ -112,7 +111,7 @@ class MendeleyTest extends UnitTestCase {
 		$this->tmp['group_id'] = $result->group_id;
 	}
 	
-	function testDeleteCollection() {
+	function testDeleteGroup() {
 		$response = $this->mendeley->delete('groups/' . $this->tmp['group_id']);
 		$this->assertTrue(empty($response));
 	}

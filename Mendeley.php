@@ -348,6 +348,7 @@ class MendeleyDoc {
 	public $bogus; // doesn't exist, when used Mendeley API will respond with the fields you may use
 	public $city;
 	public $country;
+	public $dateAccessed;
 	public $discipline;
 	public $documentId;
 	public $doi;
@@ -361,7 +362,9 @@ class MendeleyDoc {
 	public $issn;
 	public $issue;
 	public $keywords;
+	public $language;
 	public $notes;
+	public $originalPublication;
 	public $pages;
 	public $pmid;
 	public $publication_outlet; // this is snake_case because it's like that in the API
