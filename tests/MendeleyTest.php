@@ -118,8 +118,13 @@ class MendeleyTest extends UnitTestCase {
 	
 	function testDeleteDocument() {
 		$this->assertTrue(isset($this->tmp['documentId']) && is_numeric($this->tmp['documentId']));
-		$response = $this->mendeley->delete('documents/' . $this->tmp['documentId']);
-		$this->assertTrue(empty($response));
+		$this->mendeley->delete('documents/' . $this->tmp['documentId']);
+		try {
+			$this->mendeley->get('documents/' . $this->tmp['documentId']);
+			$this->assertTrue(false); // there should have been an exception because of the 404 curl
+		} catch (Exception $e) {
+			$this->assertTrue(true); // exception thrown
+		}
 	}
 	
 	function testGetGroupDocuments() {

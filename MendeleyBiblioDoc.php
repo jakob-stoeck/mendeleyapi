@@ -92,6 +92,8 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 			'genre',
 			'group_id',
 			'identifiers',
+			'publication_outlet',
+			'language',
 			'year', // TODO: we cannot check on year right now because biblio makes it "Submitted" if no year present
 		);
 	}
@@ -133,7 +135,7 @@ class MendeleyBiblioDoc extends MendeleyDoc {
 			'biblio_issue' => 'issue',
 			'biblio_keywords' => 'keywords',
 			'biblio_label' => null,
-			'biblio_lang' => 'language',
+			// 'biblio_lang' => 'language',
 			'biblio_mendeley_doc_id' => 'documentId',
 			'biblio_notes' => 'notes',
 			'biblio_number' => null,
