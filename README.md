@@ -20,25 +20,25 @@ Copy Configuration.sample.php to Configuration.php and input your Mendeley consu
 
 Use the library stand-alone like this:
 
-    <?php
-    require_once 'path/to/mendeleyapi/Mendeley.php';
-    $mendeley = new Mendeley();
-    
-    // GET request to look up things
-    $result = $mendeley->get('groups/12345'); // returns a PHP object with all documents of the group
-    $result = $mendeley->getCollection('groups/12345'); // similar to above, only that enriches the result with the document info for each document
-    
-    // POST request to change things, in this case to add a document to a group
-    $doc = new MendeleyDoc();
-    $doc->type = 'Generic';
-    $doc->title = 'Example Title';
-    $doc->authors = array('Jakob Stoeck');
-    $doc->group_id = 504091;
-    $mendeley->post('documents/', $doc->toParams());
-    
-    // DELETE
-    $mendeley->delete('documents/12345');
-    ?>
+```php
+require_once 'path/to/mendeleyapi/Mendeley.php';
+$mendeley = new Mendeley();
+
+// GET request to look up things
+$result = $mendeley->get('groups/12345'); // returns a PHP object with all documents of the group
+$result = $mendeley->getCollection('groups/12345'); // similar to above, only that enriches the result with the document info for each document
+
+// POST request to change things, in this case to add a document to a group
+$doc = new MendeleyDoc();
+$doc->type = 'Generic';
+$doc->title = 'Example Title';
+$doc->authors = array('Jakob Stoeck');
+$doc->group_id = 504091;
+$mendeley->post('documents/', $doc->toParams());
+
+// DELETE
+$mendeley->delete('documents/12345');
+```
 
 ## Libraries used
 
